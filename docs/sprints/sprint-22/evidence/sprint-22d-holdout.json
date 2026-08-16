@@ -1,0 +1,106 @@
+{
+ "arm_mechanism_probe": {
+  "arm_a_refuses_rather_than_guessing": true,
+  "arms": {
+   "arm_a": {
+    "answered": false,
+    "refusal_reason": "fact_not_in_acquired_layer",
+    "refused": true,
+    "verified": false
+   },
+   "arm_b": {
+    "answer": "1.0",
+    "answered": true,
+    "refused": false,
+    "undecidable": false,
+    "verified": true
+   }
+  },
+  "arms_are_mechanically_different": true,
+  "probe_case_id": "s22d-probe-01",
+  "probe_is_outside_the_holdout": true,
+  "why_this_matters": "22C proved its two arms differed on a probe outside its holdout rather than learning it from a holdout case; the same move here keeps measured_values at 0 while making the improvement claim decidable before W1 is paid for"
+ },
+ "arms": {
+  "arm_a": "acquired layer as 22C left it — kernel-retained worked examples only",
+  "arm_b": "acquired layer after the §1.5 declarative-fact path"
+ },
+ "case_count": 12,
+ "case_hashes": {
+  "s22d-h-01": "40ff6806a06ecf6548852dfe202e1b135321bd435467944429b033613b3368b5",
+  "s22d-h-02": "3a1fe72bb1f9404cd4f82b4c9df1b91743153a35cd750a5860b7bc93dcf9255d",
+  "s22d-h-03": "7e4b9575920592f85c83643e30511d4732b8d31c77f43a27383dcecf2e5ee1c1",
+  "s22d-h-04": "a9ea5b5c5fc0d56cd500d97b0742bbb4a1b4c7d6ba051e77df5218b0ed811f76",
+  "s22d-h-05": "1f9c71abbf263fcb80f6380c45e92d9dfd26450ed4a1ec4c70188beae9a451ef",
+  "s22d-h-06": "e9ffc24577a0fcfa5d0ccceb894d826deb68bc7b20116453f0b0ff5454006848",
+  "s22d-h-07": "96f0f30a4b6863f817555c76dcc8da9e07f6674181212b54fdeb8fc412c2b1ea",
+  "s22d-h-08": "4f74f27810075f20632ee9dae6bd630fb76a14081a3219699267d7c5ba5f85a2",
+  "s22d-h-09": "c8d52b78b15e77ba2144d1c17f74b71fcf62942dacccfb9a24e2c658fdcd33f3",
+  "s22d-h-10": "a6682e0bd50108255f9d5740df6c6b43891e3f14757868e2191ae40619a223c8",
+  "s22d-h-11": "7a0bf78a9b4be6e5fbd7d90304699975eb40cb96ba3f0542eac1a10385d1785e",
+  "s22d-h-12": "b52f91302232bdb7a28f998a95bb2c6c76733d9b895ad58604ab58b460d86ee2"
+ },
+ "case_ids": [
+  "s22d-h-01",
+  "s22d-h-02",
+  "s22d-h-03",
+  "s22d-h-04",
+  "s22d-h-05",
+  "s22d-h-06",
+  "s22d-h-07",
+  "s22d-h-08",
+  "s22d-h-09",
+  "s22d-h-10",
+  "s22d-h-11",
+  "s22d-h-12"
+ ],
+ "disjointness": {
+  "case_ids_shared_with_the_hundred": [],
+  "disjoint": true,
+  "why": "reading this holdout at the end of W1 must tell nobody anything about a task in the frozen hundred, or the W3 measurement is contaminated by a W1 result",
+  "withheld_facts_named_in_the_hundred": []
+ },
+ "grounding_ladder_statuses": [
+  "corroborated",
+  "grounded",
+  "refused"
+ ],
+ "grounding_sources": [
+  "openstax-chemistry-2e-cc-by-nc-sa-4.0",
+  "openstax-physics-cc-by-4.0"
+ ],
+ "holdout_hash": "f4ef86385d32561f7e0e716ebdae8719056ec2250a3b1f3ef46a9a4cc217e081",
+ "holdout_id": "sprint-22d-declarative-fact-holdout",
+ "integrity_content_hash": "5977343023e7d0e774529eb299b303e378416650ac44bdf3197b8c84012fab34",
+ "items": [
+  "S22D-020"
+ ],
+ "measured_values": 0,
+ "not_22c_holdout": "22C's holdout was read once to arm A 0 of 4 and arm B 0 of 4 and is released unamended; §2.3 puts any retro-fix, re-read or amendment of it out of scope, and this is a fresh unread instrument rather than the old one with a new acceptance path behind it",
+ "read_once": "at the end of W1, and never before",
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "refusal_reason_when_absent": "fact_not_in_acquired_layer",
+ "retrievable_statuses": [
+  "corroborated",
+  "grounded"
+ ],
+ "schema_version": 1,
+ "seeds": [
+  22040,
+  22041,
+  22042
+ ],
+ "success_definition": "a case succeeds when the acquired layer supplies the withheld fact at a retrievable ladder status and the registered verifier named on the case returns a pass; a case the layer cannot supply is refused by name and counts as a failure, never as an answer",
+ "withheld_facts": [
+  "Faraday constant",
+  "relative atomic mass of aluminium",
+  "relative atomic mass of calcium",
+  "relative atomic mass of chlorine",
+  "relative atomic mass of copper",
+  "relative atomic mass of hydrogen",
+  "relative atomic mass of iron",
+  "relative atomic mass of magnesium",
+  "relative atomic mass of sulfur",
+  "standard gravitational field strength"
+ ]
+}

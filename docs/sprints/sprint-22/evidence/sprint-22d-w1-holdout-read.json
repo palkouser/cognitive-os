@@ -1,0 +1,280 @@
+{
+ "arm_a_verified": 0,
+ "arm_b_verified": 4,
+ "arms": {
+  "arm_a": {
+   "answered": 0,
+   "cases": [
+    {
+     "answered": false,
+     "case_id": "s22d-h-01",
+     "facts_missing": [
+      "sulfur"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-02",
+     "facts_missing": [
+      "calcium"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-03",
+     "facts_missing": [
+      "chlorine"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-04",
+     "facts_missing": [
+      "magnesium"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-05",
+     "facts_missing": [
+      "aluminium"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-06",
+     "facts_missing": [
+      "iron"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-07",
+     "facts_missing": [
+      "copper"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-08",
+     "facts_missing": [
+      "hydrogen",
+      "chlorine"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-09",
+     "facts_missing": [
+      "hydrogen",
+      "sulfur"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-10",
+     "facts_missing": [
+      "standard gravitational field strength"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-11",
+     "facts_missing": [
+      "standard gravitational field strength"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-12",
+     "facts_missing": [
+      "Faraday constant"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    }
+   ],
+   "verified": 0
+  },
+  "arm_b": {
+   "answered": 4,
+   "cases": [
+    {
+     "answered": false,
+     "case_id": "s22d-h-01",
+     "facts_missing": [
+      "sulfur"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-02",
+     "facts_missing": [
+      "calcium"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answer": "106.35",
+     "answered": true,
+     "case_id": "s22d-h-03",
+     "facts_used": [
+      {
+       "asked_as": "chlorine",
+       "found_as": "Cl",
+       "ladder_status": "corroborated",
+       "value": "35.45"
+      }
+     ],
+     "undecidable": false,
+     "verified": true
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-04",
+     "facts_missing": [
+      "magnesium"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-05",
+     "facts_missing": [
+      "aluminium"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-06",
+     "facts_missing": [
+      "iron"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-07",
+     "facts_missing": [
+      "copper"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answer": "36.458",
+     "answered": true,
+     "case_id": "s22d-h-08",
+     "facts_used": [
+      {
+       "asked_as": "hydrogen",
+       "found_as": "H",
+       "ladder_status": "corroborated",
+       "value": "1.008"
+      },
+      {
+       "asked_as": "chlorine",
+       "found_as": "Cl",
+       "ladder_status": "corroborated",
+       "value": "35.45"
+      }
+     ],
+     "undecidable": false,
+     "verified": true
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-09",
+     "facts_missing": [
+      "sulfur"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    },
+    {
+     "answer": "78.4",
+     "answered": true,
+     "case_id": "s22d-h-10",
+     "facts_used": [
+      {
+       "asked_as": "standard gravitational field strength",
+       "found_as": "g",
+       "ladder_status": "grounded",
+       "value": "9.80"
+      }
+     ],
+     "undecidable": false,
+     "verified": true
+    },
+    {
+     "answer": "441",
+     "answered": true,
+     "case_id": "s22d-h-11",
+     "facts_used": [
+      {
+       "asked_as": "standard gravitational field strength",
+       "found_as": "g",
+       "ladder_status": "grounded",
+       "value": "9.80"
+      }
+     ],
+     "undecidable": false,
+     "verified": true
+    },
+    {
+     "answered": false,
+     "case_id": "s22d-h-12",
+     "facts_missing": [
+      "Faraday constant"
+     ],
+     "refusal_reason": "fact_not_in_acquired_layer",
+     "verified": false
+    }
+   ],
+   "verified": 4
+  }
+ },
+ "arms_differ": true,
+ "case_count": 12,
+ "entity_alias_step_was_required": true,
+ "holdout_id": "sprint-22d-declarative-fact-holdout",
+ "improvement": 4,
+ "integrity_content_hash": "d52c33f3c5a2ee9b9d9658869d3d1b5a51445d8889844f10cf6a3d4ff6af3763",
+ "items": [
+  "S22D-102"
+ ],
+ "measured_values": 12,
+ "read_once": true,
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "schema_version": 1,
+ "why_an_alias_step": "the acquired layer is keyed by the notation the source writes — Cl, Na, g — and a question is phrased in the asker's — chlorine, sodium, standard gravitational field strength. Without resolution every case misses for a plumbing reason and the record reads as a coverage failure, which is the wrong diagnosis (W1-F3)"
+}

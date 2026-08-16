@@ -1,0 +1,343 @@
+{
+ "adapter_training_not_taken": "§2.3 makes it optional and conditional on W4 having surplus. It does not: three of the four measured exits are unmet and no exit needs an adapter, so spending the release wave on an optional experiment would have added a number nothing reads",
+ "all_met": false,
+ "amendments_made_by_22d": 0,
+ "criteria": [
+  {
+   "conditions": [
+    {
+     "condition": "W3's exits record seals",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22d-w3-exits.json#_sealed"
+    },
+    {
+     "condition": "the reading holds",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22d-w3-exits.json#exits.a.met"
+    },
+    {
+     "condition": "zero provider calls in the local arm",
+     "expected": 0,
+     "holds": true,
+     "measured": 0,
+     "read_from": "sprint-22d-w3-exits.json#exits.a.external_provider_calls_in_the_local_arm"
+    },
+    {
+     "condition": "every enumerated provider refused",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22d-w3-exits.json#exits.a.every_enumerated_provider_refused"
+    }
+   ],
+   "conditions_holding": 4,
+   "conditions_total": 4,
+   "criterion": "a",
+   "decided_in_wave": "W3 (construction frozen in W0)",
+   "met": true,
+   "statement": "no large external LLM is called during the local microbenchmark"
+  },
+  {
+   "conditions": [
+    {
+     "condition": "the absolute floor",
+     "expected": true,
+     "holds": false,
+     "measured": false,
+     "read_from": "sprint-22d-w3-exits.json#exits.b.floor_met"
+    },
+    {
+     "condition": "the ten-point margin",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22d-w3-exits.json#exits.b.margin_met"
+    }
+   ],
+   "conditions_holding": 1,
+   "conditions_total": 2,
+   "criterion": "b",
+   "decided_in_wave": "W3",
+   "met": false,
+   "statement": "local verified success is at least 70% and at least 10 points above retrieval-only"
+  },
+  {
+   "conditions": [
+    {
+     "condition": "calls down at least 25%",
+     "expected": true,
+     "holds": false,
+     "measured": false,
+     "read_from": "sprint-22d-w3-exits.json#exits.c.external_provider_calls.met"
+    },
+    {
+     "condition": "accounted cost down at least 25%",
+     "expected": true,
+     "holds": false,
+     "measured": false,
+     "read_from": "sprint-22d-w3-exits.json#exits.c.accounted_cost_units.met"
+    },
+    {
+     "condition": "inside the non-inferiority margin",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22d-w3-exits.json#exits.c.non_inferiority.met"
+    }
+   ],
+   "conditions_holding": 1,
+   "conditions_total": 3,
+   "criterion": "c",
+   "decided_in_wave": "W3, against the external-teacher baseline measured in W2",
+   "met": false,
+   "statement": "large-LLM calls or equivalent cost fall at least 25% at non-inferior success"
+  },
+  {
+   "conditions": [
+    {
+     "condition": "no ungrounded assertion from the local arm",
+     "expected": 0,
+     "holds": false,
+     "measured": 26,
+     "read_from": "sprint-22d-w3-exits.json#exits.d.ungrounded_assertions.local_model"
+    },
+    {
+     "condition": "no ungrounded assertion from the mixed workload",
+     "expected": 0,
+     "holds": false,
+     "measured": 26,
+     "read_from": "sprint-22d-w3-exits.json#exits.d.ungrounded_assertions.mixed_workload"
+    }
+   ],
+   "conditions_holding": 0,
+   "conditions_total": 2,
+   "criterion": "d",
+   "decided_in_wave": "W3",
+   "met": false,
+   "statement": "factual output is grounded or explicitly uncertain"
+  },
+  {
+   "conditions": [
+    {
+     "condition": "Gate L2 record seals",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-21d7-gate-l2.json#_sealed"
+    },
+    {
+     "condition": "Gate L2 conditions met",
+     "expected": 29,
+     "holds": true,
+     "measured": 29,
+     "read_from": "sprint-21d7-gate-l2.json#counts.met"
+    },
+    {
+     "condition": "no Gate L2 condition failed",
+     "expected": 0,
+     "holds": true,
+     "measured": 0,
+     "read_from": "sprint-21d7-gate-l2.json#counts.failed"
+    },
+    {
+     "condition": "no Gate L2 condition pending",
+     "expected": 0,
+     "holds": true,
+     "measured": 0,
+     "read_from": "sprint-21d7-gate-l2.json#counts.pending"
+    },
+    {
+     "condition": "no Gate L2 condition carried",
+     "expected": 0,
+     "holds": true,
+     "measured": 0,
+     "read_from": "sprint-21d7-gate-l2.json#counts.carried"
+    },
+    {
+     "condition": "Gate D1 condition 6 still closed",
+     "expected": "closed",
+     "holds": true,
+     "measured": "closed",
+     "read_from": "sprint-21d7-gate-l2.json#gate_d1[6].state"
+    },
+    {
+     "condition": "Gate D1 condition 7 still closed",
+     "expected": "closed",
+     "holds": true,
+     "measured": "closed",
+     "read_from": "sprint-21d7-gate-l2.json#gate_d1[7].state"
+    },
+    {
+     "condition": "Gate D1 condition 15 still closed",
+     "expected": "closed",
+     "holds": true,
+     "measured": "closed",
+     "read_from": "sprint-21d7-gate-l2.json#gate_d1[15].state"
+    },
+    {
+     "condition": "22A's four exits seal",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22a-exit-criteria.json#_sealed"
+    },
+    {
+     "condition": "22A's four exits",
+     "expected": "pass",
+     "holds": true,
+     "measured": "pass",
+     "read_from": "sprint-22a-exit-criteria.json#outcome"
+    },
+    {
+     "condition": "22B's five exits seal",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22b-exit-criteria.json#_sealed"
+    },
+    {
+     "condition": "22B's five exits",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22b-exit-criteria.json#all_met"
+    },
+    {
+     "condition": "22C's four met exits seal",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-exit-criteria.json#_sealed"
+    },
+    {
+     "condition": "22C's four met exits",
+     "expected": 4,
+     "holds": true,
+     "measured": 4,
+     "read_from": "sprint-22c-exit-criteria.json#criteria_met"
+    },
+    {
+     "condition": "22A: cross_domain_items_stored_once_and_exposed_through_governed_views",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22a-exit-criteria.json#criteria.cross_domain_items_stored_once_and_exposed_through_governed_views.checks"
+    },
+    {
+     "condition": "22A: global_and_per_domain_replay_green",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22a-exit-criteria.json#criteria.global_and_per_domain_replay_green.checks"
+    },
+    {
+     "condition": "22A: invalid_domain_packages_fail_closed",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22a-exit-criteria.json#criteria.invalid_domain_packages_fail_closed.checks"
+    },
+    {
+     "condition": "22A: registers_without_changing_the_core_controller_or_storage_schema",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22a-exit-criteria.json#criteria.registers_without_changing_the_core_controller_or_storage_schema.checks"
+    }
+   ],
+   "conditions_holding": 18,
+   "conditions_total": 18,
+   "criterion": "e",
+   "decided_in_wave": "W4, re-read from sealed records at this head",
+   "met": true,
+   "statement": "prior domain, learning and safety gates remain green"
+  }
+ ],
+ "criteria_met": 2,
+ "criteria_met_ids": [
+  "a",
+  "e"
+ ],
+ "criteria_total": 5,
+ "failures": [
+  {
+   "conditions_that_did_not_hold": [
+    {
+     "condition": "the absolute floor",
+     "expected": true,
+     "measured": false,
+     "read_from": "sprint-22d-w3-exits.json#exits.b.floor_met"
+    }
+   ],
+   "criterion": "b",
+   "statement": "local verified success is at least 70% and at least 10 points above retrieval-only",
+   "wave": "W3"
+  },
+  {
+   "conditions_that_did_not_hold": [
+    {
+     "condition": "calls down at least 25%",
+     "expected": true,
+     "measured": false,
+     "read_from": "sprint-22d-w3-exits.json#exits.c.external_provider_calls.met"
+    },
+    {
+     "condition": "accounted cost down at least 25%",
+     "expected": true,
+     "measured": false,
+     "read_from": "sprint-22d-w3-exits.json#exits.c.accounted_cost_units.met"
+    }
+   ],
+   "criterion": "c",
+   "statement": "large-LLM calls or equivalent cost fall at least 25% at non-inferior success",
+   "wave": "W3, against the external-teacher baseline measured in W2"
+  },
+  {
+   "conditions_that_did_not_hold": [
+    {
+     "condition": "no ungrounded assertion from the local arm",
+     "expected": 0,
+     "measured": 26,
+     "read_from": "sprint-22d-w3-exits.json#exits.d.ungrounded_assertions.local_model"
+    },
+    {
+     "condition": "no ungrounded assertion from the mixed workload",
+     "expected": 0,
+     "measured": 26,
+     "read_from": "sprint-22d-w3-exits.json#exits.d.ungrounded_assertions.mixed_workload"
+    }
+   ],
+   "criterion": "d",
+   "statement": "factual output is grounded or explicitly uncertain",
+   "wave": "W3"
+  }
+ ],
+ "integrity_content_hash": "442e6ef6bbf3ae9de5d7661c898609915591d0aa93509e5e27c60c80f1d8fbba",
+ "items": [
+  "S22D-400"
+ ],
+ "migration_head": {
+  "0016_is": "a refusal by default — a wave that needs a migration has found a finding",
+  "expected_revision": "0015"
+ },
+ "no_wave_read_an_exit_before_this_record": "W3 assembled the four measured readings from arm records that were sealed before it ran, and read no exit as a verdict; the fifth is a re-reading of other sprints and could not have been produced by any wave of this one",
+ "outcome": "typed negative",
+ "outcome_tag": "sprint-22d-evidence-baseline",
+ "pre_registration_sha256": "a878f109de88bed7d0b7ec42eb3fc40d2de3b355eb57d286216cd98fcfdcb20b",
+ "readings_hash": "9826f1254611a57743af3030a4fdc3b2d72b8054a8434905bf955a5efccc1a5f",
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "schema_version": 1,
+ "sprint": "22D",
+ "the_accounting_source_is_named": {
+  "repaired": false,
+  "source": "the accounting is driver-side and never passed through the Tool Plane: `run_arm` builds one `ArmAccounting` per workload from each `ArmOutcome`, and the record it produces is sealed per arm. The external half is additionally bound by the receipts digest over every governed call's request and normalized response hash",
+  "why_the_tool_plane_was_not_needed": "no arm executes a tool. The workloads answer, are verified by registered verifiers and are accounted from their own outcomes, so a Tool Plane store that discards its events could not have weakened these numbers — and repairing it here would have been a schema-adjacent change §2.3 excludes, made for a reading nothing in this sprint takes",
+  "why_this_is_here": "§5 requires 22C W2-F3 repaired or the accounting's source named, and §1.1 said that finding stops being cosmetic in this sprint because the accounting exit needs a durable record of what executed where"
+ },
+ "w3_exits_rebuild_from_the_arm_records": true,
+ "what_a_stop_owes": "§5: a typed negative under sprint-22d-evidence-baseline naming which exit failed, in which wave, with which measured values. `failures` above is assembled from the conditions rather than written out, so it cannot drift from the verdicts"
+}

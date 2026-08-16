@@ -1,0 +1,450 @@
+{
+ "arms": {
+  "external_teacher": {
+   "abstained": 0,
+   "accounted_cost_units": 10.502,
+   "arm": "external_teacher",
+   "escalated": 10,
+   "external_provider_calls": 10,
+   "grounded": 0,
+   "input_tokens": 909,
+   "local_compute_seconds": 0.0,
+   "local_model_calls": 0,
+   "output_tokens": 95,
+   "per_task": {
+    "s22d-fixture-01": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-02": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-03": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-04": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-05": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-06": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "ungrounded_assertion",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-07": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "ungrounded_assertion",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-08": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "ungrounded_assertion",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-09": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "ungrounded_assertion",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-10": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "ungrounded_assertion",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    }
+   },
+   "tasks": 10,
+   "undecidable": 0,
+   "ungrounded_assertions": 5,
+   "verified": 10,
+   "verified_percent": 100.0
+  },
+  "local_model": {
+   "abstained": 1,
+   "accounted_cost_units": 0.123,
+   "arm": "local_model",
+   "escalated": 6,
+   "external_provider_calls": 0,
+   "grounded": 4,
+   "input_tokens": 0,
+   "local_compute_seconds": 8.5,
+   "local_model_calls": 10,
+   "output_tokens": 76,
+   "per_task": {
+    "s22d-fixture-01": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-02": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-03": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-04": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-05": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-06": {
+     "abstained": false,
+     "citations_resolve": true,
+     "disposition": "grounded",
+     "escalated": false,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-07": {
+     "abstained": false,
+     "citations_resolve": true,
+     "disposition": "grounded",
+     "escalated": false,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-08": {
+     "abstained": false,
+     "citations_resolve": true,
+     "disposition": "grounded",
+     "escalated": false,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-09": {
+     "abstained": false,
+     "citations_resolve": true,
+     "disposition": "grounded",
+     "escalated": false,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-10": {
+     "abstained": true,
+     "citations_resolve": false,
+     "disposition": "typed_abstention",
+     "escalated": true,
+     "undecidable": false,
+     "verified": false
+    }
+   },
+   "tasks": 10,
+   "undecidable": 0,
+   "ungrounded_assertions": 0,
+   "verified": 9,
+   "verified_percent": 90.0
+  },
+  "no_memory": {
+   "abstained": 0,
+   "accounted_cost_units": 0.0405,
+   "arm": "no_memory",
+   "escalated": 10,
+   "external_provider_calls": 0,
+   "grounded": 0,
+   "input_tokens": 0,
+   "local_compute_seconds": 0.0,
+   "local_model_calls": 10,
+   "output_tokens": 81,
+   "per_task": {
+    "s22d-fixture-01": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-02": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-03": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-04": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-05": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-06": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "ungrounded_assertion",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-07": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "ungrounded_assertion",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-08": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "ungrounded_assertion",
+     "escalated": true,
+     "undecidable": false,
+     "verified": false
+    },
+    "s22d-fixture-09": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "ungrounded_assertion",
+     "escalated": true,
+     "undecidable": false,
+     "verified": true
+    },
+    "s22d-fixture-10": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "ungrounded_assertion",
+     "escalated": true,
+     "undecidable": false,
+     "verified": false
+    }
+   },
+   "tasks": 10,
+   "undecidable": 0,
+   "ungrounded_assertions": 5,
+   "verified": 8,
+   "verified_percent": 80.0
+  },
+  "retrieval_only": {
+   "abstained": 0,
+   "accounted_cost_units": 0.0,
+   "arm": "retrieval_only",
+   "escalated": 5,
+   "external_provider_calls": 0,
+   "grounded": 5,
+   "input_tokens": 0,
+   "local_compute_seconds": 0.0,
+   "local_model_calls": 0,
+   "output_tokens": 0,
+   "per_task": {
+    "s22d-fixture-01": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": true,
+     "verified": false
+    },
+    "s22d-fixture-02": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": true,
+     "verified": false
+    },
+    "s22d-fixture-03": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": true,
+     "verified": false
+    },
+    "s22d-fixture-04": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": true,
+     "verified": false
+    },
+    "s22d-fixture-05": {
+     "abstained": false,
+     "citations_resolve": false,
+     "disposition": "not_a_factual_output",
+     "escalated": true,
+     "undecidable": true,
+     "verified": false
+    },
+    "s22d-fixture-06": {
+     "abstained": false,
+     "citations_resolve": true,
+     "disposition": "grounded",
+     "escalated": false,
+     "undecidable": true,
+     "verified": false
+    },
+    "s22d-fixture-07": {
+     "abstained": false,
+     "citations_resolve": true,
+     "disposition": "grounded",
+     "escalated": false,
+     "undecidable": true,
+     "verified": false
+    },
+    "s22d-fixture-08": {
+     "abstained": false,
+     "citations_resolve": true,
+     "disposition": "grounded",
+     "escalated": false,
+     "undecidable": true,
+     "verified": false
+    },
+    "s22d-fixture-09": {
+     "abstained": false,
+     "citations_resolve": true,
+     "disposition": "grounded",
+     "escalated": false,
+     "undecidable": true,
+     "verified": false
+    },
+    "s22d-fixture-10": {
+     "abstained": false,
+     "citations_resolve": true,
+     "disposition": "grounded",
+     "escalated": false,
+     "undecidable": true,
+     "verified": false
+    }
+   },
+   "tasks": 10,
+   "undecidable": 10,
+   "ungrounded_assertions": 0,
+   "verified": 0,
+   "verified_percent": 0.0
+  }
+ },
+ "arms_are_mechanically_different": true,
+ "arms_run": [
+  "no_memory",
+  "retrieval_only",
+  "external_teacher",
+  "local_model"
+ ],
+ "at_least_one_resolved_citation_walk": true,
+ "at_least_one_typed_abstention": true,
+ "decides_no_exit_criterion": "the slice runs ten fixture tasks against a fixture runtime; every 22D exit is a claim about the frozen hundred and a cleared model, and none of them is read here",
+ "every_refusal_refused": true,
+ "external_calls_outside_the_teacher_arm": 0,
+ "integrity_content_hash": "012dd90b6d1c21d9527f238a3fd1f758f6c8b5095374028a38feb3b084f5af9a",
+ "items": [
+  "S22D-030"
+ ],
+ "readings_hash": "9826f1254611a57743af3030a4fdc3b2d72b8054a8434905bf955a5efccc1a5f",
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "refusals": [
+  {
+   "attempt": "register openrouter",
+   "message": "external providers are not constructible during the local microbenchmark: ['openrouter']",
+   "refused": true
+  },
+  {
+   "attempt": "benchmark uncleared weights",
+   "message": "no local model may be benchmarked without an OperatorLicenseClearance and a pinned weight hash: a benchmark run on unclear weights is evidence that cannot be released (\u00a73.2)",
+   "refused": true
+  }
+ ],
+ "runtime": {
+  "clearance_id": null,
+  "context_tokens": 4096,
+  "device": "cpu",
+  "model_id": "fixture-local-model",
+  "quantization": "none",
+  "seed": 22040,
+  "temperature": 0.0,
+  "top_p": 1.0,
+  "weights_sha256": ""
+ },
+ "schema_version": 1,
+ "slice_scale": "fixture",
+ "tasks": 10,
+ "ungrounded_assertions_by_arm": {
+  "external_teacher": 5,
+  "local_model": 0,
+  "no_memory": 5,
+  "retrieval_only": 0
+ }
+}

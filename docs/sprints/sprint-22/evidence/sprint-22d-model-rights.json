@@ -1,0 +1,98 @@
+{
+ "advisory": {
+  "advisory_status": "approved",
+  "recognised_by": "cognitive_os.corpus.factory.RECOGNISED_PERMISSIVE_LICENSES",
+  "the_program_may_not_permit": "this status is advice. It became a permission only because a named person decided it did, and the two are kept in the same record so the difference stays visible"
+ },
+ "candidates_rejected": [
+  {
+   "licence_tag": "apache-2.0",
+   "licence_text_in_distribution": false,
+   "repository": "bartowski/Mistral-7B-Instruct-v0.3-GGUF",
+   "upstream": "mistralai/Mistral-7B-Instruct-v0.3 ships no licence file either"
+  },
+  {
+   "licence_tag": "mit",
+   "licence_text_in_distribution": false,
+   "repository": "unsloth/Phi-4-mini-instruct-GGUF",
+   "upstream": "microsoft/Phi-4-mini-instruct ships a LICENSE, but it covers a different repository's bytes and source_content_hash exists to catch exactly that drift"
+  },
+  {
+   "licence_tag": "llama3.1",
+   "licence_text_in_distribution": false,
+   "repository": "lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF",
+   "upstream": "meta-llama/Llama-3.1-8B-Instruct is gated:manual and its identifier is not one the platform recognises, so the advice would have been 'unknown'"
+  }
+ ],
+ "clearance": {
+  "cleared_at": "2026-08-15T00:00:00Z",
+  "cleared_by": "palkouser (Sprint 22 gate owner)",
+  "content_hash": "f06ab9d11c0a5d111d7aa4e8fecfe2732729ce3e71a1e28e39017a460d73f56d",
+  "evidence_hash": "5de36594c10839788a8c589443a8ef9d8b8d17c65a1b5807206ae037fc36c6bd",
+  "identifier": "Apache-2.0",
+  "notes": "Qwen/Qwen3-8B-GGUF@7c41481f57cb95916b40956ab2f0b139b296d974, Qwen3-8B-Q6_K.gguf. The licence text was read out of the distribution beside the weights and archived as sprint-22d-model-licence.txt, not transcribed from the model card.",
+  "permitted_uses": [
+   "internal_use",
+   "benchmark_use"
+  ],
+  "source_content_hash": "cb042ccd76795a8830d6be6bd4165245847cc68e41797b13bd61aed4c2cfbce6",
+  "status": "approved"
+ },
+ "closes": "the model_licence blocking dependency W0 surfaced with a named owner",
+ "integrity_content_hash": "1a844ffb1ecb553ad9f113270507fcc86351194148a6b6acd0b26e5c616f0707",
+ "items": [
+  "S22D-003"
+ ],
+ "licence": {
+  "archived_as": "sprint-22d-model-licence.txt",
+  "bytes": 11544,
+  "canonical_apache_2_0_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+  "deviations_from_canonical": [
+   "the appendix copyright line is filled in as 'Copyright 2025 Alibaba Cloud', which is the appendix's documented purpose",
+   "no trailing newline at end of file"
+  ],
+  "identified_as": "Apache-2.0",
+  "no_added_clause": true,
+  "read_from_the_distribution": true,
+  "sha256": "5de36594c10839788a8c589443a8ef9d8b8d17c65a1b5807206ae037fc36c6bd",
+  "why_the_diff_and_not_the_title": "a vendor may append an acceptable-use rider to an otherwise standard text and the heading will still read Apache License. The text was diffed against apache.org's own copy, so 'permissive' is a comparison rather than a guess"
+ },
+ "model": {
+  "licence_identifier": "Apache-2.0",
+  "licence_url": "https://huggingface.co/Qwen/Qwen3-8B-GGUF/resolve/main/LICENSE",
+  "parameter_class": "8B",
+  "publisher_lfs_oid": "cb042ccd76795a8830d6be6bd4165245847cc68e41797b13bd61aed4c2cfbce6",
+  "publisher_reported_bytes": 6725899040,
+  "quantization": "Q6_K",
+  "repository": "Qwen/Qwen3-8B-GGUF",
+  "revision": "7c41481f57cb95916b40956ab2f0b139b296d974",
+  "weight_file": "Qwen3-8B-Q6_K.gguf",
+  "why_this_distribution": "the only candidate of four that ships its licence text with its weights. The other three carry a repository licence tag and no LICENSE file, which is a model-card assertion — and 22C W1-D2 forbids transcribing a nominated licence",
+  "why_this_quantization": "seventy of the hundred frozen tasks are closed-form computation and quantization damage lands hardest on arithmetic, so Q6_K buys the accuracy that matters; Q8_0 costs thirty per cent more for almost nothing and 46 GiB of RAM makes Q4_K_M's thrift pointless"
+ },
+ "operator_departed_from_the_advice": false,
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "rights": {
+  "the_licence_would_have_permitted_all_eight": true,
+  "what_the_granted_rights_open": "internal_use lets the weights be served at all; benchmark_use lets the numbers W3 measures be published. Every exit criterion in this sprint is reachable",
+  "what_the_withheld_rights_close": "without modification, derivative_work or model_training the optional adapter of §2.3 is closed by the operator's own decision, independently of the chemistry corpus being NC-SA. Two separate reasons now point the same way, and W4 surplus cannot reopen either of them by finding spare schedule",
+  "withheld": [
+   "commercial_use",
+   "derivative_work",
+   "model_training",
+   "modification",
+   "public_release",
+   "redistribution"
+  ]
+ },
+ "schema_version": 1,
+ "weights_are_an_observation": {
+  "bytes": 6725899040,
+  "matches_the_publisher_object_id": true,
+  "path": "/home/palkouser/projekt/cognitive-os-data/s22d-runtime/models/Qwen3-8B-Q6_K.gguf",
+  "sha256": "cb042ccd76795a8830d6be6bd4165245847cc68e41797b13bd61aed4c2cfbce6",
+  "why_not_an_invariant": "6.7 GB cannot live in this repository, so `--check` recomputes this hash where the file exists and compares it against nothing where it does not. The licence bytes are archived and therefore *are* recomputed everywhere",
+  "why_that_comparison_and_not_just_a_local_hash": "a local hash proves the file did not change after it landed. The publisher's own object id is what says the file that landed is the file that was published — the two questions look alike and only one of them is about provenance"
+ },
+ "what_the_search_found": "three of four candidates could not satisfy the preflight's own requirement, and not for a reason about their licences being bad. A licence tag is metadata a publisher types; a LICENSE file beside the weights is bytes that shipped with them. The requirement to hash the second is what made the difference visible"
+}

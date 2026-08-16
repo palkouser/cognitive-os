@@ -48,3 +48,6 @@ dist/
 *.key
 *.pem
 secrets.*
+
+# Sprint 22D W2 external-teacher arm. Untracked, like every other live provider config.
+config/providers.s22d.local.yaml

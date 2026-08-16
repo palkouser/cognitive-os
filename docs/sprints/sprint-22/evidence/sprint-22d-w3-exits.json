@@ -1,0 +1,195 @@
+{
+ "exit_e_is_not_read_here": "§2.2(e) re-reads the prior domain, learning and safety gates from their sealed records against this sprint's head, and §3's wave table gives that to W4",
+ "exits": {
+  "a": {
+   "criterion": "no large external LLM is called during the local microbenchmark",
+   "enumerated_external_providers": [
+    "claude-code",
+    "codex-cli",
+    "minimax",
+    "openrouter"
+   ],
+   "every_enumerated_provider_refused": true,
+   "external_provider_calls_in_the_local_arm": 0,
+   "maximum_provider_calls_in_the_budget": 0,
+   "met": true,
+   "read_as": "a construction, never an audit of what happened",
+   "refusals": [
+    {
+     "provider_id": "claude-code",
+     "refused": true
+    },
+    {
+     "provider_id": "codex-cli",
+     "refused": true
+    },
+    {
+     "provider_id": "minimax",
+     "refused": true
+    },
+    {
+     "provider_id": "openrouter",
+     "refused": true
+    }
+   ]
+  },
+  "b": {
+   "criterion": "local verified success is at least 70% and at least 10 points above retrieval-only",
+   "floor_met": false,
+   "layer_contribution_points": 0.0,
+   "local_model_verified_percent": 66.0,
+   "margin_met": true,
+   "margin_points": 62.0,
+   "met": false,
+   "minimum_local_success_percent": 70.0,
+   "minimum_margin_points": 10.0,
+   "no_memory_verified_percent": 66.0,
+   "retrieval_only_verified_percent": 4.0,
+   "undecidable_counts_as": "failure for every arm, and the count is reported",
+   "undecidable_tasks": {
+    "external_teacher": 12,
+    "local_model": 13,
+    "mixed_workload": 15,
+    "retrieval_only": 0
+   },
+   "what_this_subtraction_is_not": "local_model minus retrieval_only isolates the model, not the layer. The layer's contribution is local_model minus no_memory, which the allocation never asks for and which is reported here beside it rather than substituted for it (W2-F3)"
+  },
+  "c": {
+   "accounted_cost_units": {
+    "baseline": 120.8295,
+    "met": false,
+    "mixed": 127.9526,
+    "reduction_percent": -5.8952
+   },
+   "baseline": "the external_teacher arm on the same hundred tasks, measured in W2",
+   "criterion": "large-LLM calls or equivalent cost fall at least 25% at non-inferior success",
+   "external_provider_calls": {
+    "baseline": 100,
+    "met": false,
+    "mixed": 96,
+    "reduction_percent": 4.0
+   },
+   "met": false,
+   "non_inferiority": {
+    "absolute_drop_points": 2.0,
+    "baseline_verified_percent": 87.0,
+    "margin_points": 3.0,
+    "met": true,
+    "mixed_verified_percent": 85.0
+   },
+   "quantities": [
+    "external_provider_calls",
+    "accounted_cost_units"
+   ],
+   "why_both_quantities_are_reported": "so a reduction cannot be claimed on whichever moved further. Both must clear the target, and a workload that beats the cost target while falling outside the non-inferiority margin is a failed exit rather than a trade-off to narrate"
+  },
+  "d": {
+   "criterion": "factual output is grounded or explicitly uncertain",
+   "dispositions": {
+    "external_teacher": {
+     "grounded": 0,
+     "typed_abstention": 0,
+     "ungrounded_assertions": 30
+    },
+    "local_model": {
+     "grounded": 4,
+     "typed_abstention": 0,
+     "ungrounded_assertions": 26
+    },
+    "mixed_workload": {
+     "grounded": 4,
+     "typed_abstention": 0,
+     "ungrounded_assertions": 26
+    },
+    "no_memory": {
+     "grounded": 0,
+     "typed_abstention": 0,
+     "ungrounded_assertions": 30
+    },
+    "retrieval_only": {
+     "grounded": 4,
+     "typed_abstention": 96,
+     "ungrounded_assertions": 0
+    }
+   },
+   "factual_output_kinds": [
+    "declarative_fact",
+    "fact_dependent_derivation"
+   ],
+   "factual_outputs": 30,
+   "met": false,
+   "read_over": [
+    "local_model",
+    "mixed_workload"
+   ],
+   "ungrounded_assertions": {
+    "local_model": 26,
+    "mixed_workload": 26
+   },
+   "why_those_two": "they are the systems this sprint proposes. The three W2 baselines are reported beside them because a count that only ever appears for the proposal reads as a property of the proposal rather than of the hundred"
+  }
+ },
+ "exits_met": [
+  "a"
+ ],
+ "exits_read_here": [
+  "a",
+  "b",
+  "c",
+  "d"
+ ],
+ "integrity_content_hash": "ec1fa4bbfcb7f2e380a8642d0ec3a2d56e461c24db7fdcae696818ca5fa87769",
+ "items": [
+  "S22D-300"
+ ],
+ "outcome": "typed_negative",
+ "read_once": true,
+ "readings_hash": "9826f1254611a57743af3030a4fdc3b2d72b8054a8434905bf955a5efccc1a5f",
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "schema_version": 1,
+ "sources": [
+  "sprint-22d-w3-local-model.json",
+  "sprint-22d-w3-mixed-workload.json",
+  "sprint-22d-w2-external-teacher.json",
+  "sprint-22d-w2-no-memory.json",
+  "sprint-22d-w2-retrieval-only.json"
+ ],
+ "stability": {
+  "reading": "observation",
+  "the_external_teacher": {
+   "divergent_task_ids": [
+    "s22d-convert-01",
+    "s22d-convert-02",
+    "s22d-convert-03",
+    "s22d-convert-05",
+    "s22d-convert-07",
+    "s22d-dimension-08",
+    "s22d-fact-02",
+    "s22d-numeric-01",
+    "s22d-numeric-04",
+    "s22d-numeric-10",
+    "s22d-numeric-11",
+    "s22d-quantity-02"
+   ],
+   "divergent_tasks": 12,
+   "identical_prompts": true,
+   "net_movement_points": -2,
+   "repeated_itself": false,
+   "tasks_compared": 96,
+   "verified_here": 81,
+   "verified_there": 83,
+   "why_this_qualifies_the_non_inferiority_reading": "the margin is three absolute points and it is read against a single run of the baseline. This is what a second run of that same baseline, on the same prompts through the same provider, did — so a difference the size of the margin is not distinguishable from the baseline moving. §2.3 forbids amending the margin after a measured number exists, so the exit is read as frozen and this is recorded beside it rather than folded into it"
+  },
+  "the_local_runtime": {
+   "divergent_task_ids": [],
+   "divergent_tasks": 0,
+   "identical_prompts": true,
+   "repeated_itself": true,
+   "tasks_compared": 96,
+   "verified_here": 62,
+   "verified_there": 62
+  },
+  "why_not_an_invariant": "no exit reads either number and nothing recomputes them from a source of truth. They are recorded because a silent divergence on either side would make every other number in this wave a single sample rather than a measurement"
+ },
+ "what_a_typed_negative_is": "a measured result with the same falsifiability a pass would have had: every number below was produced by an instrument frozen before it ran, and a failed exit here is a fact about the system rather than a wave that ran out of time (22C, whose negative this sprint's §0 carries as precedent)"
+}

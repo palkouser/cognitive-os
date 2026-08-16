@@ -1,0 +1,862 @@
+{
+ "accounting": {
+  "abstained": 0,
+  "accounted_cost_units": 8.87239,
+  "arm": "no_memory",
+  "escalated": 100,
+  "external_provider_calls": 0,
+  "grounded": 0,
+  "input_tokens": 7705,
+  "local_compute_seconds": 451.639,
+  "local_model_calls": 100,
+  "output_tokens": 1007,
+  "per_task": {
+   "s22d-convert-01": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-02": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-03": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-04": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-05": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-06": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-07": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-08": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-09": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-10": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-11": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-12": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-13": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-14": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-15": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-16": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-convert-17": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-18": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-19": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-convert-20": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-derive-01": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-derive-02": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-03": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-04": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-derive-05": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-derive-06": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-07": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-derive-08": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-09": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-derive-10": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-01": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-dimension-02": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-dimension-03": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-dimension-04": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-dimension-05": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-dimension-06": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-dimension-07": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-dimension-08": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-dimension-09": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-dimension-10": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-01": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-02": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-03": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-04": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-05": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-06": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-07": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-08": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-09": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-10": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-11": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-12": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-13": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-14": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-15": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-16": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-17": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-18": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-19": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-20": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "ungrounded_assertion",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-01": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-02": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-03": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-04": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-05": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-06": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-07": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-08": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-09": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-10": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-11": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-12": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-13": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-14": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-15": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-16": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-17": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-numeric-18": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-19": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-20": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-01": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-02": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-quantity-03": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-04": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-05": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-quantity-06": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-quantity-07": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-08": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-09": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-10": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-11": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-quantity-12": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-13": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-14": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-15": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   },
+   "s22d-quantity-16": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-17": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-18": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-19": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-quantity-20": {
+    "abstained": false,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": true,
+    "verified": false
+   }
+  },
+  "tasks": 100,
+  "undecidable": 13,
+  "ungrounded_assertions": 30,
+  "verified": 66,
+  "verified_percent": 66.0
+ },
+ "answer_form_instructions": {
+  "mathematical_expression": "Reply with a single number on one line and nothing else, for example: 3500",
+  "physical_quantity": "Reply with a magnitude and a unit on one line and nothing else, for example: 3500 N",
+  "structured_value": "Reply with a single word on one line and nothing else, for example: pascal"
+ },
+ "arm": "no_memory",
+ "integrity_content_hash": "749e9a5a312234df517330395c400862e4e0955557493ad8779871805f8e8b15",
+ "items": [
+  "S22D-202"
+ ],
+ "malformed_answers": 3,
+ "malformed_task_ids": [
+  "s22d-convert-16",
+  "s22d-derive-01",
+  "s22d-derive-09"
+ ],
+ "measured_values": 100,
+ "nothing_was_repaired": "the readers refuse a malformed answer and record it as it arrived. A reader that extracted a number from a sentence would be scoring itself, and by W3 nobody could separate the model's competence from the leniency of a regular expression",
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "runtime": {
+  "model": "Qwen3-8B-Q6_K.gguf",
+  "quantization": "Q6_K",
+  "reasoning": "off",
+  "sampling": {
+   "max_tokens": 64,
+   "seed": 22,
+   "temperature": 0.0
+  },
+  "server_arguments": [
+   "--threads",
+   "16",
+   "--ctx-size",
+   "2048",
+   "--n-gpu-layers",
+   "0"
+  ],
+  "weights_sha256": "cb042ccd76795a8830d6be6bd4165245847cc68e41797b13bd61aed4c2cfbce6"
+ },
+ "schema_version": 1,
+ "tasks": 100,
+ "why_malformed_is_counted_apart": "'the arm produced no readable answer', 'the verifier could not decide this answer' and 'the verifier could not start' are three different facts. W0-F1 was the third being reported as the second; this keeps the first from joining them"
+}
