@@ -441,8 +441,14 @@ DRY_RUN_GATES = (
 )
 
 
-async def run_dry_run(entry_id: str) -> dict[str, Any]:
-    """Mine, draft, isolate, patch, evaluate, refuse — and compile the experience either way."""
+async def run_dry_run(entry_id: str, *, label: str | None = None) -> dict[str, Any]:
+    """Mine, draft, isolate, patch, evaluate, refuse — and compile the experience either way.
+
+    `label` names the worktree and therefore the deterministic experiment id (W1-F8). The
+    default is W1's; a continuation run passes its own so the sealed W1 record's worktree
+    identity is never reused, and pairs it with `--output` so the sealed record's *file* is
+    never overwritten either.
+    """
     import os
 
     from isolation_22e import RealWorktree, matrix_gate_ids, run_gate
@@ -572,7 +578,7 @@ async def run_dry_run(entry_id: str) -> dict[str, Any]:
             active_artifact_namespace_hash=before["values"]["active_artifact_namespace_hash"],
             captured_at=MINING_TIME,
         )
-        async with RealWorktree(f"w1-dryrun-{entry_id}") as worktree:
+        async with RealWorktree(label or f"w1-dryrun-{entry_id}") as worktree:
             assert worktree.path is not None
             _isolation, _verifier = await service.prepare_isolation(
                 experiment, approved, snapshot, created_at=MINING_TIME
@@ -850,26 +856,30 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--entry", default="L1")
     parser.add_argument("--check", action="store_true")
+    parser.add_argument(
+        "--label", default=None, help="worktree label; a continuation must not reuse W1's"
+    )
+    parser.add_argument("--output", type=Path, default=OUTPUT)
     arguments = parser.parse_args()
 
     if arguments.check:
-        stored = json.loads(OUTPUT.read_text(encoding="utf-8"))
+        stored = json.loads(arguments.output.read_text(encoding="utf-8"))
         verdict = check_record(stored)
         print(json.dumps(verdict, indent=1, sort_keys=True))
         return 0 if verdict["reproduced"] else 1
 
-    record = asyncio.run(run_dry_run(arguments.entry))
+    record = asyncio.run(run_dry_run(arguments.entry, label=arguments.label))
     record["integrity_content_hash"] = _sha256(
         canonical({key: value for key, value in record.items() if key != "integrity_content_hash"})
     )
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(
+    arguments.output.parent.mkdir(parents=True, exist_ok=True)
+    arguments.output.write_text(
         json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8"
     )
     print(
         json.dumps(
             {
-                "output": OUTPUT.name,
+                "output": arguments.output.name,
                 "entry": record["entry_id"],
                 "stages": record["stages"],
                 "generation_mode_after_host_verification": record["draft"][

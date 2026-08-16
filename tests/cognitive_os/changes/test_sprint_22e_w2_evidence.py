@@ -157,3 +157,57 @@ def test_the_decision_check_reproduces_and_refuses_a_tampered_selection() -> Non
     tampered = _load_decisions()
     tampered["decision_two"]["selection"] = "L1"
     assert check_decisions(tampered)["reproduced"] is False
+
+
+# ---------------------------------------------------------------------------
+# The dry run 1 continuation — the same candidate under the corrected gate
+# ---------------------------------------------------------------------------
+
+CONTINUATION = EVIDENCE / "sprint-22e-w2-dryrun1-continuation.json"
+
+
+def _load_continuation() -> dict[str, Any]:
+    return json.loads(CONTINUATION.read_text(encoding="utf-8"))
+
+
+def test_the_continuation_exists_and_its_seal_recomputes() -> None:
+    stored = _load_continuation()
+    body = {key: value for key, value in stored.items() if key != "integrity_content_hash"}
+    assert hashlib.sha256(_canonical(body)).hexdigest() == stored["integrity_content_hash"]
+
+
+def test_the_corrected_gate_passes_and_a_pin_test_honestly_refuses() -> None:
+    """W2-F1's definitive proof and W2-F2's honest failure, in one traversal.
+
+    `compatibility` — the gate that falsely rejected dry run 1 — passes the same candidate
+    under the corrected command, so the mypy price is confirmed to never have existed. And
+    `focused_target_tests` fails **on evidence about the candidate**: the W1-F4 diagnosis
+    test pins the defect's existence live, the candidate repairs the defect, and the pin
+    refuses. Nobody planted it, and it is the honest evaluation failure §2.2(c) requires at
+    least one dry run to produce.
+    """
+    gates = {item["gate_id"]: item for item in _load_continuation()["gates"]}
+    compatibility = gates["compatibility"]
+    assert compatibility["ran"] is True and compatibility["passed"] is True
+    focused = gates["focused_target_tests"]
+    assert focused["ran"] is True and focused["passed"] is False
+    assert "test_the_defect_is_the_repository_allowlist" in focused["stdout_tail"]
+
+
+def test_the_continuation_is_the_same_traversal_shape_as_dry_run_1() -> None:
+    """Same stages in order, same single allowed path, zero mutation recomputed — the same
+    candidate carried twice, refused for two different reasons, only one of them its own."""
+    stored = _load_continuation()
+    w1 = json.loads((EVIDENCE / "sprint-22e-w1-dryrun1.json").read_text(encoding="utf-8"))
+    assert stored["stages"] == w1["stages"]
+    assert stored["worktree_capture"]["changed_files"] == w1["worktree_capture"]["changed_files"]
+    assert stored["zero_active_state_mutation"]["zero_active_state_mutation"] is True
+    assert stored["provider"]["provider_id"] == "claude-code"
+    assert stored["draft"]["generation_mode_after_host_verification"] == "provider_assisted"
+
+
+def test_the_dryrun_check_reproduces_over_the_continuation() -> None:
+    from dryrun_22e import check_record as check_dryrun
+
+    verdict = check_dryrun(_load_continuation())
+    assert verdict["reproduced"] is True, verdict["mismatches"]

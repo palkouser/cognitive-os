@@ -68,13 +68,42 @@ precedent (D5's and D6's negatives made the instrument sound; Gate L2 closed in 
 L2 are rejected with their measured risks attached — L1's ceiling is not a forecast, L2's
 margin sits inside 22D W3-F3's measured baseline noise.
 
-**Still owed by W2, named rather than implied:** the Experience Compiler leg (compile *and*
-query back, both kinds — the failed side is dry run 1; the successful side comes from the
-corrected-gate continuation or dry run 2); dry runs 2 and 3 on distinct weakness classes, at
-least one failing its own evaluation honestly on evidence about the candidate (dry run 1's
-refusal no longer qualifies — W2-F1 reclassified it a false rejection); and one rollback
-executed in isolation. W3 is unblocked: it mines L7 and carries the repair through the full
-chain under decision one's ruling.
+### The dry run 1 continuation — one traversal, and both halves of what W2 owed it
+
+The same L1 candidate was carried through the whole lifecycle again — live claude-code draft
+admitted by host verification, repair applied by `deterministic_replace` in a fresh worktree
+(`w2-dryrun1-continuation`; the sealed W1 record's worktree identity and file are never
+reused, the driver grew `--label`/`--output` for exactly that), zero active-state mutation
+recomputed — under the corrected compatibility command.
+`sprint-22e-w2-dryrun1-continuation.json`, sealed `8427ffdff2072da7…`, and it delivered two
+things at once:
+
+**W2-F1's definitive proof.** `compatibility` — the gate that refused this exact candidate in
+W1 — **passes it in 14.4 s** under the command that reproduces the CI lane. The mypy price
+never existed.
+
+### W2-F2 — a test that pins a defect's existence blocks the defect's repair
+
+**And the honest failure §2.2(c) requires, which nobody planted.** `focused_target_tests`
+refused the candidate — because the W1-F4 diagnosis test,
+`test_the_defect_is_the_repository_allowlist_and_not_the_unit_library`, asserts **live** that
+the contract refuses the written notation, and in the repaired worktree it no longer does.
+The gate's verdict is evidence about the candidate: the repair changes released behaviour a
+test currently pins. That is the evaluation matrix doing its exact job, and it prices
+something the ledger's L1 entry did not carry: **landing L1 requires updating the pin test in
+the same candidate**, so its change specification must allow the test file beside
+`quantities.py` — a diagnosis pin is a fence around a *sealed correction*, and it has to move
+in the same change that moves the behaviour it pins. Dry run 1's W1 refusal stays what W2-F1
+reclassified it (a false rejection); *this* refusal is the honest one, and the record carries
+both under one traversal shape — the same candidate, refused twice, only once for a reason
+that was its own.
+
+**Still owed by W2:** the Experience Compiler leg — compile *and* query back; the failed kind
+is dry run 1's traversal, and §2.2(e) names the successful kind as the approved change's,
+which W3 produces; dry runs 2 and 3 on distinct weakness classes (the honest-failure
+requirement is now met by the continuation, so the remaining two runs owe distinct classes
+and the success-shaped stop at approval-eligible); and one rollback executed in isolation.
+W3 remains unblocked: it mines L7 under decision one's ruling.
 
 ---
 
