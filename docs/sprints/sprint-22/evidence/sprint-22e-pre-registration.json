@@ -1,0 +1,98 @@
+{
+ "amendments_made_by_22e": 0,
+ "exit_criteria": [
+  "rejected proposals cause zero active-state mutation",
+  "one approved change reaches protected `main` through PR and post-merge CI",
+  "failed and successful experience is retained and retrievable",
+  "all Gate M conditions pass",
+  "`sprint-22-baseline` peels to the verified protected commit"
+ ],
+ "gate_m_conditions": [
+  "Gate L2 passes",
+  "Domain Registry v2 adds two domains without core branching",
+  "the 10^6 capacity, maintenance, backup, and restore envelope passes",
+  "three continual-learning cycles pass cross-domain anti-forgetting",
+  "a rights-cleared source is acquired, verified, learned, and applied end to end",
+  "bounded local English capability passes without a large external LLM",
+  "large-LLM dependence falls by at least the declared threshold",
+  "one governed self-improvement reaches protected `main`",
+  "security, provider, migration, distribution, and repository-language gates pass",
+  "post-merge `main` CI and the annotated `sprint-22-baseline` tag are verified"
+ ],
+ "gate_owner_decisions": {
+  "condition_5_reading": {
+   "decision": "22D's grounded holdout answers",
+   "question": "which sealed record does 'acquired, verified, learned, and applied end to end' read?",
+   "rationale": "the allocation's verb is 'applied' and the word 'improved' appears nowhere in condition 5; 22C's improvement arithmetic is 22C's own exit 5, a different sentence. Reading the improvement number into this condition would write a word into a frozen sentence, which §2.3 forbids in either direction",
+   "reads": "sprint-22d-w1-holdout-read.json",
+   "rejected_alternatives": [
+    {
+     "measured": "0 of 4 improvement, both arms",
+     "reading": "22C's improvement arithmetic",
+     "reads": "sprint-22c-w3-improvement.json",
+     "verdict": "fails"
+    },
+    {
+     "reading": "both conjunctively",
+     "verdict": "fails",
+     "why_rejected": "also writes 'improved' into the frozen sentence, and makes the condition unreachable by anything §2.3 permits this sprint"
+    }
+   ],
+   "taken": "W0, before any candidate was generated",
+   "the_risk_this_reading_carries": "it is the reading that moves condition 5 from ambiguous to holding, and both numbers were already sealed and visible when it was taken. The mitigation is that the alternative and *its* verdict are published here and re-published in the W4 assessment, so a reader can apply either without re-deriving anything",
+   "verdict_under_this_reading": "holds"
+  },
+  "zero_zero_sixteen_eligibility": {
+   "decision": "no — 0016 stays a refusal",
+   "eligible": false,
+   "excludes": "22D W2-F1, the LOCAL_API configuration class (ledger entry L5)",
+   "question": "may a repair that needs migration 0016 enter the ranked ledger?",
+   "rationale": "22D W2-F1 touches no Gate M condition, so spending the one approved change there licenses no re-measurement; and a schema migration would put a second variable into the single governed traversal, leaving a failure ambiguous between the loop and the migration",
+   "taken": "W0, before any candidate was generated"
+  }
+ },
+ "integrity_content_hash": "7ab42855ea8d9ab9b12f30f9600ab98f9e90e90df5b3750ba95419d104456bae",
+ "items": [
+  "S22E-010",
+  "S22E-011",
+  "S22E-012",
+  "S22E-013",
+  "S22E-014",
+  "S22E-015",
+  "S22E-016"
+ ],
+ "measured_values": 0,
+ "migration_head": {
+  "0016_is": "a refusal, kept one by the W0 gate-owner decision",
+  "expected_revision": "0015"
+ },
+ "negative_outcome_tag": "sprint-22e-evidence-baseline",
+ "out_of_scope": [
+  "any autonomous provider authority — merge, tag, deploy, active-memory write — anywhere, including 'just for the demo'",
+  "rewriting any 22D exit sentence or 22C exit arithmetic",
+  "Layer-1 scale-up, new acquisition campaigns, adapter training, any learner refit",
+  "more than one approved change",
+  "resolving 22C W3-A1 or 22C W2-A1",
+  "any schema change beyond an explicitly selected 0016 candidate, which the W0 decision declined to permit",
+  "tuning any pre-registered configuration after its first measured number exists"
+ ],
+ "outcome_tag": "sprint-22-baseline",
+ "outcome_tag_is": "the programme-level Sprint 22 tag, not a sprint-local one; annotated **after** the squash merge on the merged main head, never on the wave branch (22C's release lesson), and its peeling is itself an exit criterion",
+ "re_measurement_licence": {
+  "each_condition_records": "whether it read a predecessor's seal or a 22E re-measurement, and why",
+  "instrument": "the frozen 22D hundred-task instrument, re-run per workload, with the landed repair as the only delta (22B W4-A1: measure the middle)",
+  "rule": "a 22E re-measurement replaces a predecessor's sealed reading **only if** a released repair affecting that measurement has landed through the governed path first — PR to protected main, merged by the gate owner, green on post-merge exact-head CI",
+  "what_cannot_change_a_verdict": "rereading a sealed number"
+ },
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "revision": 1,
+ "schema_version": 1,
+ "sprint": "22E",
+ "weakness_ledger": {
+  "one_entry_was_repriced_in_w0": "L4 (22B W3-F1) — W0-F1",
+  "record": "sprint-22e-weakness-ledger.json",
+  "sealed_in": "W0, before any proposal existed",
+  "the_plan_pre_selects_nothing": true
+ },
+ "why_amendments_are_structurally_zero": "§2.1 asks the gate owner for two decisions and neither moves a threshold; §2.3 forbids rewriting any 22D exit sentence or 22C exit arithmetic, and no other amendment path exists in this plan"
+}

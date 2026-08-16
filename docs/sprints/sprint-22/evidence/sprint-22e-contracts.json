@@ -1,0 +1,248 @@
+{
+ "S22E-010": {
+  "contract": "the five exit criteria, verbatim from the execution sprint allocation",
+  "count": 5,
+  "criteria": [
+   "rejected proposals cause zero active-state mutation",
+   "one approved change reaches protected `main` through PR and post-merge CI",
+   "failed and successful experience is retained and retrievable",
+   "all Gate M conditions pass",
+   "`sprint-22-baseline` peels to the verified protected commit"
+  ],
+  "moved_by_22e": 0,
+  "source": "docs/sprints/sprint-22/execution-sprint-allocation.md"
+ },
+ "S22E-011": {
+  "additional_members": [
+   "domain_registry_snapshot_hash"
+  ],
+  "at_least_one_rejection_is_real": "a genuine provider-generated candidate refused at a genuine gate, not a fixture refusing a fixture",
+  "captured_before_and_after": "every rejected proposal, without exception",
+  "compared_by": "surface_22e.compare, which recomputes every member's equality from two captures and never accepts an `unchanged: true` literal (22A W4-F2)",
+  "contract_members": [
+   "repository_commit",
+   "repository_status_hash",
+   "repository_manifest_hash",
+   "active_database_fingerprint",
+   "active_artifact_namespace_hash"
+  ],
+  "enumeration_derived_from": "ActiveStateProtectionSnapshot.model_fields, not typed out beside it (22A W4-F1: a coverage word is an enumeration with a test asserting it)",
+  "members": [
+   "repository_commit",
+   "repository_status_hash",
+   "repository_manifest_hash",
+   "active_database_fingerprint",
+   "active_artifact_namespace_hash",
+   "domain_registry_snapshot_hash"
+  ],
+  "reading": "(a) what 'zero active-state mutation' reads",
+  "surface_contract": "cognitive_os.domain.changes.ActiveStateProtectionSnapshot",
+  "why_additional_members_exist": "W0-F3 — the domain registry is data rather than a table since 22A, and the released snapshot contract has no field for it; a candidate that registered a domain would move none of the contract's five"
+ },
+ "S22E-012": {
+  "asserted_by": "a test that the provider's authority ends at the proposal",
+  "chain": [
+   "a repair drawn from the sealed ledger",
+   "a proposal with a rollback plan",
+   "a provider-assisted candidate in an isolated worktree",
+   "a sandbox evaluation matrix",
+   "regression, security, migration, packaging and rollback gates",
+   "approval by the named user",
+   "a PR to protected main",
+   "merge by the gate owner",
+   "post-merge exact-head CI"
+  ],
+  "count": 1,
+  "no_provider_merges_tags_or_deploys": true,
+  "reading": "(b) what 'one approved change' is",
+  "selection_authority": "the gate owner, in W3, from the sealed ledger",
+  "the_plan_pre_selects_nothing": true,
+  "why_not_two": "§2.3 — the exit says one, and a second 'while we are here' is how a governed loop becomes an ungoverned habit"
+ },
+ "S22E-013": {
+  "a_dry_run_is": "a complete lifecycle that stops short of merge — every stage entered in order through the released transitions, stage-skipping refused (22C's discipline), experience compiled at the end",
+  "at_least_one_must_fail_its_own_evaluation": "honestly, and be rejected on the evidence — a loop that has only ever succeeded has not been tested (22A W4-F2, applied to a process)",
+  "count": 3,
+  "cover": "distinct weakness classes and distinct outcomes",
+  "reading": "(c) what a dry run is, and what three of them cover",
+  "rollback_is": "a rollback executed in isolation, never a manifest that exists (D7 W3-F1)"
+ },
+ "S22E-014": {
+  "an_unresolvable_path": "raises, and never renders false",
+  "bindings": [
+   {
+    "also_reads_path": "counts.failed",
+    "condition": 1,
+    "expected_at_w0": "holds, 29 of 29",
+    "expected_value": 29,
+    "reading": "D7's sealed close, the same record 22D's exit (e) reads",
+    "reads_path": "counts.met",
+    "reads_record": "../../sprint-21/evidence/sprint-21d7-gate-l2.json",
+    "source_kind": "predecessor_seal"
+   },
+   {
+    "also_reads_path": "criteria.registers_without_changing_the_core_controller_or_storage_schema.decided_by",
+    "condition": 2,
+    "expected_at_w0": "holds",
+    "expected_value": "pass",
+    "reading": "22A's four exits, and the one that is literally 'without core branching'",
+    "reads_path": "outcome",
+    "reads_record": "sprint-22a-exit-criteria.json",
+    "source_kind": "predecessor_seal"
+   },
+   {
+    "also_reads_path": "outcome",
+    "condition": 3,
+    "expected_at_w0": "holds, 5 of 5",
+    "expected_value": true,
+    "reading": "22B's five exits",
+    "reads_path": "all_met",
+    "reads_record": "sprint-22b-exit-criteria.json",
+    "source_kind": "predecessor_seal"
+   },
+   {
+    "condition": 4,
+    "expected_at_w0": "holds",
+    "reading": "22C's replay exit specifically — *not* its outcome, which is a typed negative earned on a different exit (improvement) that condition 4 does not read",
+    "reads_path": "criteria.every cycle replays all retained domains",
+    "reads_record": "sprint-22c-exit-criteria.json",
+    "source_kind": "predecessor_seal"
+   },
+   {
+    "also_reads_path": "improvement",
+    "condition": 5,
+    "expected_at_w0": "holds, under the W0 gate-owner reading",
+    "expected_value": 4,
+    "frozen_by": "gate_owner_decisions.condition_5_reading",
+    "reading": "22D's grounded holdout answers",
+    "reads_path": "arm_b_verified",
+    "reads_record": "sprint-22d-w1-holdout-read.json",
+    "source_kind": "predecessor_seal"
+   },
+   {
+    "condition": 6,
+    "expected_at_w0": "fails as sealed, 66 against 70",
+    "expected_value": false,
+    "measured_ceiling_if_l1_lands": "local_model 66 -> at most 76, computed in W0 from the sealed per-task records with malformed answers subtracted; a ceiling, never a forecast",
+    "re_measurement_licensed_by": "a landed repair affecting local verified success (ledger L1)",
+    "reading": "22D exit (b), local verified success against the 70 % floor",
+    "reads_path": "criteria[1].met",
+    "reads_record": "sprint-22d-exit-criteria.json",
+    "source_kind": "predecessor_seal"
+   },
+   {
+    "condition": 7,
+    "expected_at_w0": "fails as sealed, calls -4 %, accounted cost +5.9 %",
+    "expected_value": false,
+    "re_measurement_licensed_by": "a landed repair affecting calls or cost (ledger L2)",
+    "reading": "22D exit (c), calls or equivalent cost against the 25 % target",
+    "reads_path": "criteria[2].met",
+    "reads_record": "sprint-22d-exit-criteria.json",
+    "source_kind": "predecessor_seal"
+   },
+   {
+    "condition": 8,
+    "expected_at_w0": "22E's to earn",
+    "reading": "this sprint's one approved change, merged and green at its exact head",
+    "reads_path": "post_merge_ci.conclusion",
+    "reads_record": "sprint-22e-w3-promotion.json",
+    "source_kind": "this_sprint"
+   },
+   {
+    "condition": 9,
+    "expected_at_w0": "holds, re-read not quoted",
+    "reading": "the CI lanes at the release head, re-read rather than quoted",
+    "reads_path": "lanes",
+    "reads_record": "sprint-22e-w4-gates.json",
+    "source_kind": "this_sprint"
+   },
+   {
+    "condition": 10,
+    "expected_at_w0": "22E's to earn",
+    "reading": "post-merge main CI, and sprint-22-baseline peeling to the verified protected commit",
+    "reads_path": "tag.peels_to",
+    "reads_record": "sprint-22e-release.json",
+    "source_kind": "this_sprint"
+   }
+  ],
+  "check_rebuilds_from_sources": true,
+  "condition_count": 10,
+  "conditions": [
+   "Gate L2 passes",
+   "Domain Registry v2 adds two domains without core branching",
+   "the 10^6 capacity, maintenance, backup, and restore envelope passes",
+   "three continual-learning cycles pass cross-domain anti-forgetting",
+   "a rights-cleared source is acquired, verified, learned, and applied end to end",
+   "bounded local English capability passes without a large external LLM",
+   "large-LLM dependence falls by at least the declared threshold",
+   "one governed self-improvement reaches protected `main`",
+   "security, provider, migration, distribution, and repository-language gates pass",
+   "post-merge `main` CI and the annotated `sprint-22-baseline` tag are verified"
+  ],
+  "honest_starting_score": {
+   "fails_as_sealed": 2,
+   "holds": 6,
+   "holds_under_a_w0_reading": 1,
+   "note": "conditions 5 and 9 both appear once: 5 holds under the W0 reading, 9 is counted as to-be-earned because it is re-read at this sprint's head rather than inherited",
+   "to_be_earned_by_22e": 3
+  },
+  "re_measurement_licence": {
+   "each_condition_records": "whether it read a predecessor's seal or a 22E re-measurement, and why",
+   "instrument": "the frozen 22D hundred-task instrument, re-run per workload, with the landed repair as the only delta (22B W4-A1: measure the middle)",
+   "rule": "a 22E re-measurement replaces a predecessor's sealed reading **only if** a released repair affecting that measurement has landed through the governed path first — PR to protected main, merged by the gate owner, green on post-merge exact-head CI",
+   "what_cannot_change_a_verdict": "rereading a sealed number"
+  },
+  "read_once": "in W4, at the release head",
+  "reading": "(d) what 'all Gate M conditions pass' reads",
+  "source": "docs/sprints/sprint-22/development-plan.md §11, Gate M"
+ },
+ "S22E-015": {
+  "a_digest_is_not_a_read": true,
+  "both_kinds": [
+   "the failed candidates'",
+   "the approved change's"
+  ],
+  "compiled_through": "the released Experience Compiler, into the EMG",
+  "reading": "(e) what 'retained and retrievable' means",
+  "then": "queried back out — the record shows a retrieval, from the store, whose content answers what was tried, what failed, and why, for one failure and one success",
+  "why": "retention without a demonstrated read is a hope (D7 W3-F1)"
+ },
+ "S22E-016": {
+  "amendments_made_by_22e": 0,
+  "decisions": {
+   "condition_5_reading": {
+    "decision": "22D's grounded holdout answers",
+    "question": "which sealed record does 'acquired, verified, learned, and applied end to end' read?",
+    "rationale": "the allocation's verb is 'applied' and the word 'improved' appears nowhere in condition 5; 22C's improvement arithmetic is 22C's own exit 5, a different sentence. Reading the improvement number into this condition would write a word into a frozen sentence, which §2.3 forbids in either direction",
+    "reads": "sprint-22d-w1-holdout-read.json",
+    "rejected_alternatives": [
+     {
+      "measured": "0 of 4 improvement, both arms",
+      "reading": "22C's improvement arithmetic",
+      "reads": "sprint-22c-w3-improvement.json",
+      "verdict": "fails"
+     },
+     {
+      "reading": "both conjunctively",
+      "verdict": "fails",
+      "why_rejected": "also writes 'improved' into the frozen sentence, and makes the condition unreachable by anything §2.3 permits this sprint"
+     }
+    ],
+    "taken": "W0, before any candidate was generated",
+    "the_risk_this_reading_carries": "it is the reading that moves condition 5 from ambiguous to holding, and both numbers were already sealed and visible when it was taken. The mitigation is that the alternative and *its* verdict are published here and re-published in the W4 assessment, so a reader can apply either without re-deriving anything",
+    "verdict_under_this_reading": "holds"
+   },
+   "zero_zero_sixteen_eligibility": {
+    "decision": "no — 0016 stays a refusal",
+    "eligible": false,
+    "excludes": "22D W2-F1, the LOCAL_API configuration class (ledger entry L5)",
+    "question": "may a repair that needs migration 0016 enter the ranked ledger?",
+    "rationale": "22D W2-F1 touches no Gate M condition, so spending the one approved change there licenses no re-measurement; and a schema migration would put a second variable into the single governed traversal, leaving a failure ambiguous between the loop and the migration",
+    "taken": "W0, before any candidate was generated"
+   }
+  },
+  "no_amendment_path_exists": true,
+  "no_threshold_moves": true,
+  "reading": "the two gate-owner decisions §2.1 asks for, and nothing else"
+ }
+}
