@@ -1,0 +1,269 @@
+{
+ "closes_the_debt_named_in": "sprint-22e-w2-experience.json#successful_kind_owed_by",
+ "integrity_content_hash": "1635f4805ddf4ce88998c9a87e186fabec24eca05dd474dff42d9684b4b36b3e",
+ "items": [
+  "S22E-402"
+ ],
+ "kind_demonstrated": "successful — W3's approved change, the half W2 recorded as owed",
+ "rankings": {
+  "acceptance_completed": {
+   "entries": [
+    {
+     "pair_id": "s22e-approved-change",
+     "rank": 1,
+     "score": "0.421053"
+    },
+    {
+     "pair_id": "fixture-direct-success",
+     "rank": 2,
+     "score": "0.333333"
+    },
+    {
+     "pair_id": "fixture-unsafe-tool-request",
+     "rank": 3,
+     "score": "0.333333"
+    },
+    {
+     "pair_id": "s22e-dryrun-1",
+     "rank": 4,
+     "score": "0.318182"
+    },
+    {
+     "pair_id": "s22e-dryrun-1-continuation",
+     "rank": 5,
+     "score": "0.318182"
+    },
+    {
+     "pair_id": "fixture-failed-strategy",
+     "rank": 6,
+     "score": "0.250000"
+    }
+   ],
+   "query_text": "self_improvement status=completed accepted_outcome segment=acceptance segment=verification segment=tool_execution"
+  },
+  "acceptance_failed": {
+   "entries": [
+    {
+     "pair_id": "s22e-dryrun-1",
+     "rank": 1,
+     "score": "0.380952"
+    },
+    {
+     "pair_id": "s22e-dryrun-1-continuation",
+     "rank": 2,
+     "score": "0.380952"
+    },
+    {
+     "pair_id": "fixture-failed-strategy",
+     "rank": 3,
+     "score": "0.315789"
+    },
+    {
+     "pair_id": "s22e-approved-change",
+     "rank": 4,
+     "score": "0.285714"
+    },
+    {
+     "pair_id": "fixture-unsafe-tool-request",
+     "rank": 5,
+     "score": "0.217391"
+    },
+    {
+     "pair_id": "fixture-direct-success",
+     "rank": 6,
+     "score": "0.200000"
+    }
+   ],
+   "query_text": "self_improvement status=failed tool_result segment=acceptance segment=verification segment=tool_execution"
+  }
+ },
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "retrieval": {
+  "answer_read_from_the_store": {
+   "blob_content_hash": "84694153f0fa02d58064d23d28b93767e89282e50bc1bdc77d113b51df972e44",
+   "the_landed_bytes_claim_is_in_the_timeline": true,
+   "what_succeeded": true,
+   "what_was_tried": true,
+   "why": true
+  },
+  "both_kinds_retained_and_retrievable": true,
+  "the_failed_traversals_outrank_it_for_the_refusal_query": true,
+  "the_successful_traversal_is_top_for_the_acceptance_query": true,
+  "the_successful_traversal_outranks_every_distractor": true,
+  "the_two_kinds_are_distinguishable": true,
+  "top_for_the_acceptance_query": "s22e-approved-change",
+  "why_two_queries": "one query proves the graph is stored; two prove the kinds are told apart. A store that returned everything for everything would satisfy the first and fail the second"
+ },
+ "schema_version": 1,
+ "search_surface_tokens": {
+  "s22e-approved-change": [
+   "accepted_outcome",
+   "correctness=correct",
+   "correctness=unknown",
+   "necessity=unknown",
+   "next",
+   "reasoning",
+   "s22e:L7:s22e-approved-change",
+   "segment=acceptance",
+   "segment=planning",
+   "segment=provider_execution",
+   "segment=tool_execution",
+   "segment=verification",
+   "self_improvement",
+   "status=completed",
+   "tool_action",
+   "verifier"
+  ],
+  "s22e-dryrun-1": [
+   "correctness=correct",
+   "correctness=incorrect",
+   "correctness=unknown",
+   "necessity=unknown",
+   "next",
+   "reasoning",
+   "s22e:L1:s22e-dryrun-1",
+   "segment=acceptance",
+   "segment=planning",
+   "segment=provider_execution",
+   "segment=tool_execution",
+   "segment=verification",
+   "self_improvement",
+   "status=completed",
+   "status=failed",
+   "tool_action",
+   "tool_result",
+   "verifier"
+  ],
+  "s22e-dryrun-1-continuation": [
+   "correctness=correct",
+   "correctness=incorrect",
+   "correctness=unknown",
+   "necessity=unknown",
+   "next",
+   "reasoning",
+   "s22e:L1:s22e-dryrun-1-continuation",
+   "segment=acceptance",
+   "segment=planning",
+   "segment=provider_execution",
+   "segment=tool_execution",
+   "segment=verification",
+   "self_improvement",
+   "status=completed",
+   "status=failed",
+   "tool_action",
+   "tool_result",
+   "verifier"
+  ]
+ },
+ "side_store": {
+  "blob": "sha256/84/84694153f0fa02d58064d23d28b93767e89282e50bc1bdc77d113b51df972e44",
+  "content_hash": "84694153f0fa02d58064d23d28b93767e89282e50bc1bdc77d113b51df972e44",
+  "read_back_hash_matches": true,
+  "read_back_validates_as_the_contract": true,
+  "side_id": "s22e-approved-change-graph",
+  "structural_hash": "2f5efee4706888a3b4e0e4cfe2153b806176c6ae39787f6b9b970b51f3350a6d"
+ },
+ "sprint": "22E",
+ "traversal": {
+  "s22e-approved-change": {
+   "compilation_decision": "completed",
+   "graph_hash": "6b2d76c1c4b1075d7c8ba72900fc21c00f41f4fb761db9a2cc6bf94b774f5397",
+   "graph_nodes": 13,
+   "manifest_hash": "e3c24051cef2fe4d4b023b4f80644fa2cf8a4e5dd333c181604c7e4a04d54c0a",
+   "projected_as_accepted": true,
+   "record": "sprint-22e-w3-approved-change.json",
+   "record_sha256": "54ea4f4d72d551f5cacb5b91f065be697fd788081a464063b03af0d4adc0438d",
+   "refusing_gate": null,
+   "timeline": [
+    {
+     "event_type": "proposal.mined",
+     "sequence": 1,
+     "status": "completed",
+     "summary": "weakness L7 mined from the sealed ledger revision; the gate owner's selection read from its own record"
+    },
+    {
+     "event_type": "provider.proposal",
+     "sequence": 2,
+     "status": "completed",
+     "summary": "live claude-code draft admitted by merge_provider_draft host verification"
+    },
+    {
+     "event_type": "tool.deterministic_replace",
+     "sequence": 3,
+     "status": "completed",
+     "summary": "repair applied to src/cognitive_os/proposals/service.py, tests/cognitive_os/proposals/test_proposal_engine.py: the merged provider revision is revalidated so its seal survives to the approved revision"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 4,
+     "status": "completed",
+     "summary": "gate reproducible_build passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 5,
+     "status": "completed",
+     "summary": "gate focused_target_tests passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 6,
+     "status": "completed",
+     "summary": "gate historical_regression passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 7,
+     "status": "completed",
+     "summary": "gate unrelated_domain_regression passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 8,
+     "status": "completed",
+     "summary": "gate security passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 9,
+     "status": "completed",
+     "summary": "gate policy passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 10,
+     "status": "completed",
+     "summary": "gate schema passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 11,
+     "status": "completed",
+     "summary": "gate compatibility passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 12,
+     "status": "completed",
+     "summary": "gate dependency_packaging passed"
+    },
+    {
+     "event_type": "acceptance.completed",
+     "sequence": 13,
+     "status": "completed",
+     "summary": "approved by palkouser, merged at f4a6305, post-merge exact-head CI success; the landed bytes are the evaluated bytes"
+    }
+   ],
+   "timeline_entries": 13
+  }
+ },
+ "wave": "W4",
+ "what_separates_the_two_kinds_on_the_surface": {
+  "failed_have_accepted_outcome": false,
+  "failed_have_both_status_tokens": true,
+  "so": "a failed traversal's token set is nearly a superset of a successful one's — it contains completed steps too — and only `accepted_outcome` and the absence of `status=failed` distinguish the successful graph. Retrieval separates the kinds only when the query names those two things",
+  "successful_has_accepted_outcome": true,
+  "successful_has_status_completed": true,
+  "successful_has_status_failed": false
+ }
+}
