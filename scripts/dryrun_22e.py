@@ -306,6 +306,82 @@ def read_draft(structured: Any, proposal: Any) -> Any:
 # W1-F4. The repair, and the cause 22D misattributed
 # ---------------------------------------------------------------------------
 
+
+#: **The repair, per ledger entry.** Each spec is a file plus an ordered chain of
+#: `deterministic_replace` steps, hash-chained so every applied byte is checked rather than
+#: trusted. L1 is W1's original; L2 and L6 are W2's dry runs on distinct weakness classes.
+#:
+#: L2 (`policy_decision_function`): the 22D escalation predicate is blind to output kind, so
+#: seventy closed-form tasks escalate for lacking a citation the grounding exit never reads.
+#: The repair gates the grounding condition on the factual output kinds, with a defaulted
+#: parameter so the frozen pre-registration display's call site keeps its exact behaviour.
+#:
+#: L6 (`provider_boundary`): `BoundedCliRunner._communicate`'s cancellation catch converts an
+#: expired caller deadline into `ProviderCancelledError` below the layer that owns the
+#: deadline. The repair cleans up and re-raises the cancellation itself: the caller's own
+#: `asyncio.timeout` then surfaces it as `TimeoutError` where the deadline lives, and a real
+#: operator cancel stays a cancel.
+REPAIR_SPECS: dict[str, dict[str, Any]] = {
+    "L1": {
+        "file": "src/cognitive_os/verification/physics/quantities.py",
+        "steps": (
+            (
+                'SAFE_UNIT = re.compile(r"^[A-Za-z0-9_/*^ .-]{1,128}$")',
+                'SAFE_UNIT = re.compile(r"^[A-Za-z0-9_/*^ .\u00b7\u00b2\u00b3\u03a9-]{1,128}$")',
+            ),
+        ),
+    },
+    "L2": {
+        "file": "scripts/benchmark_22d.py",
+        "steps": (
+            (
+                "def escalate(outcome: ArmOutcome) -> bool:",
+                "def escalate(outcome: ArmOutcome, output_kind: str | None = None) -> bool:",
+            ),
+            (
+                "        or outcome.grounded_span_count < MINIMUM_GROUNDED_SPANS",
+                "        or (\n"
+                "            (output_kind is None or output_kind in FACTUAL_OUTPUT_KINDS)\n"
+                "            and outcome.grounded_span_count < MINIMUM_GROUNDED_SPANS\n"
+                "        )",
+            ),
+            (
+                "        accounting.escalated += int(escalate(outcome))",
+                '        accounting.escalated += int(escalate(outcome, str(task["output_kind"])))',
+            ),
+            (
+                '            "escalated": escalate(outcome),',
+                '            "escalated": escalate(outcome, str(task["output_kind"])),',
+            ),
+        ),
+    },
+    "L6": {
+        "file": "src/cognitive_os/providers/cli_process.py",
+        "steps": (
+            (
+                "        except asyncio.CancelledError:\n"
+                "            # Cleanup before re-raising as a typed error: a cancelled call that left the\n"  # noqa: E501
+                "            # provider running would keep spending the operator's subscription unobserved.\n"  # noqa: E501
+                "            await self._terminate_tree(process)\n"
+                "            raise ProviderCancelledError(\n"
+                "                provider_id=self.provider_id,\n"
+                '                message="advisory CLI execution was cancelled",\n'
+                "            ) from None",
+                "        except asyncio.CancelledError:\n"
+                "            # Cleanup before re-raising: a cancelled call that left the provider running\n"  # noqa: E501
+                "            # would keep spending the operator's subscription unobserved. The\n"
+                "            # cancellation itself propagates: converting it to a typed provider error\n"  # noqa: E501
+                "            # here made an expired caller deadline read as a cancellation nobody\n"
+                "            # requested (22E ledger L6) - the caller's own asyncio.timeout turns this\n"  # noqa: E501
+                "            # back into TimeoutError at the layer that owns the deadline, and a real\n"  # noqa: E501
+                "            # operator cancel stays a cancel.\n"
+                "            await self._terminate_tree(process)\n"
+                "            raise",
+            ),
+        ),
+    },
+}
+
 #: The file ledger entry L1 actually lives in, and the line that actually rejects the notation.
 #:
 #: **W1-F4.** 22D W2-F2 reads "the registered physics verifiers ... **error** on `m/s²`,
@@ -332,41 +408,61 @@ REPAIR_BEFORE = 'SAFE_UNIT = re.compile(r"^[A-Za-z0-9_/*^ .-]{1,128}$")'
 REPAIR_AFTER = 'SAFE_UNIT = re.compile(r"^[A-Za-z0-9_/*^ .·²³Ω-]{1,128}$")'
 
 
-def apply_repair(worktree: Path) -> dict[str, Any]:
-    """Apply the repair through the released `deterministic_replace`, never by hand.
+def apply_repair(worktree: Path, entry_id: str = "L1") -> dict[str, Any]:
+    """Apply the entry's repair chain through the released `deterministic_replace`.
 
-    §2.2(b)'s chain has the host applying the change, and `deterministic_replace` is the
-    released way: it takes the exact `before`, the exact `after`, and the hash the result must
-    have, so the applied bytes are checked rather than trusted. A patch written by string
-    surgery here would be the driver asserting its own correctness.
+    Each step passes the hash of the bytes it starts from, so every intermediate state is
+    checked rather than trusted; the record carries the baseline hash, the final hash and
+    the step count. A patch written by string surgery here would be the driver asserting
+    its own correctness.
     """
     from cognitive_os.changes.service import deterministic_replace
 
-    target = worktree / REPAIR_FILE
+    spec = REPAIR_SPECS[entry_id]
+    target = worktree / spec["file"]
     original = target.read_bytes()
-    # `expected_hash` is the hash of the **baseline**, not of the result, and the released
-    # function is idempotent on purpose: handed already-repaired content it reverses the
-    # replacement, checks *that* against the baseline hash, and returns the content unchanged.
-    # Passing the result's hash — which this driver did first — fails with "baseline hash
-    # mismatch", which is the correct refusal and an easy thing to read as a broken patch.
     baseline_hash = _sha256(original)
-    repaired = deterministic_replace(
-        original, REPAIR_BEFORE.encode(), REPAIR_AFTER.encode(), baseline_hash
-    )
-    target.write_bytes(repaired)
+    content = original
+    for before, after in spec["steps"]:
+        content = deterministic_replace(content, before.encode(), after.encode(), _sha256(content))
+    target.write_bytes(content)
     return {
-        "file": REPAIR_FILE,
+        "file": spec["file"],
         "applied_by": "cognitive_os.changes.service.deterministic_replace",
+        "steps": len(spec["steps"]),
         "before_hash": baseline_hash,
-        "after_hash": _sha256(repaired),
+        "after_hash": _sha256(content),
         "expected_hash_is_the_baseline": True,
-        "bytes_changed": len(repaired) - len(original),
+        "bytes_changed": len(content) - len(original),
         "the_provider_did_not_write_this": (
             "no released provider configuration in this repository can write a file, and "
             "merge_provider_draft refuses a draft carrying a patch; the host applies the "
             "change and the provider advised on the proposal"
         ),
-        "finding": "W1-F4",
+        "finding": "W1-F4" if entry_id == "L1" else f"ledger {entry_id}",
+    }
+
+
+def rollback_repair(worktree: Path, entry_id: str, repair: dict[str, Any]) -> dict[str, Any]:
+    """Execute the rollback in isolation, through the same released mechanism, reversed.
+
+    §2.2's rollback evidence must be a rollback *executed*, not a manifest that exists
+    (D7 W3-F1). The steps run in reverse with before/after swapped, every intermediate
+    hash-checked, and the result must be byte-identical to the baseline the repair recorded
+    - verified by hash here and by the released worktree capture reporting an empty diff.
+    """
+    from cognitive_os.changes.service import deterministic_replace
+
+    spec = REPAIR_SPECS[entry_id]
+    target = worktree / spec["file"]
+    content = target.read_bytes()
+    for before, after in reversed(spec["steps"]):
+        content = deterministic_replace(content, after.encode(), before.encode(), _sha256(content))
+    target.write_bytes(content)
+    return {
+        "executed_by": "deterministic_replace, steps reversed",
+        "restored_hash": _sha256(content),
+        "restored_hash_is_the_baseline": _sha256(content) == repair["before_hash"],
     }
 
 
@@ -416,6 +512,68 @@ def probe_repair(worktree: Path) -> dict[str, Any]:
     }
 
 
+def probe_repair_l2(worktree: Path) -> dict[str, Any]:
+    """Does the repaired predicate distinguish output kinds - and keep every old behaviour?"""
+    import subprocess
+
+    from isolation_22e import gate_environment
+
+    program = (
+        "import sys, json\n"
+        "sys.path.insert(0, 'scripts')\n"
+        "from benchmark_22d import ArmOutcome, escalate\n"
+        "computation = ArmOutcome(task_id='t', arm='local_model', answer='4', abstained=False)\n"
+        "abstainer = ArmOutcome(task_id='t', arm='local_model', answer=None, abstained=True)\n"
+        "print(json.dumps({\n"
+        " 'closed_form_no_longer_escalates': not escalate(computation, 'closed_form_computation'),\n"  # noqa: E501
+        " 'factual_still_escalates': escalate(computation, 'declarative_fact'),\n"
+        " 'abstention_still_escalates': escalate(abstainer, 'closed_form_computation'),\n"
+        " 'defaulted_call_keeps_old_behaviour': escalate(computation),\n"
+        "}))\n"
+    )
+    completed = subprocess.run(
+        ["uv", "run", "--all-groups", "python", "-c", program],
+        cwd=worktree,
+        capture_output=True,
+        text=True,
+        timeout=600,
+        env=gate_environment(),
+    )
+    verdicts = json.loads(completed.stdout.strip().splitlines()[-1])
+    return {**verdicts, "every_probe_holds": all(verdicts.values())}
+
+
+def probe_repair_l6(worktree: Path) -> dict[str, Any]:
+    """The conversion is gone, the module still imports, and the timeout path is intact."""
+    import subprocess
+
+    from isolation_22e import gate_environment
+
+    source = (worktree / REPAIR_SPECS["L6"]["file"]).read_text(encoding="utf-8")
+    completed = subprocess.run(
+        ["uv", "run", "--all-groups", "python", "-c", "import cognitive_os.providers.cli_process"],
+        cwd=worktree,
+        capture_output=True,
+        text=True,
+        timeout=600,
+        env=gate_environment(),
+    )
+    return {
+        "cancellation_no_longer_converted": (
+            'message="advisory CLI execution was cancelled"' not in source
+        ),
+        "timeout_conversion_intact": "advisory CLI execution exceeded its timeout" in source,
+        "module_still_imports": completed.returncode == 0,
+        "every_probe_holds": (
+            'message="advisory CLI execution was cancelled"' not in source
+            and "advisory CLI execution exceeded its timeout" in source
+            and completed.returncode == 0
+        ),
+    }
+
+
+PROBES = {"L1": probe_repair, "L2": probe_repair_l2, "L6": probe_repair_l6}
+
 # ---------------------------------------------------------------------------
 # The lifecycle
 # ---------------------------------------------------------------------------
@@ -441,7 +599,13 @@ DRY_RUN_GATES = (
 )
 
 
-async def run_dry_run(entry_id: str, *, label: str | None = None) -> dict[str, Any]:
+async def run_dry_run(
+    entry_id: str,
+    *,
+    label: str | None = None,
+    full_matrix: bool = False,
+    rollback: bool = False,
+) -> dict[str, Any]:
     """Mine, draft, isolate, patch, evaluate, refuse — and compile the experience either way.
 
     `label` names the worktree and therefore the deterministic experiment id (W1-F8). The
@@ -585,17 +749,27 @@ async def run_dry_run(entry_id: str, *, label: str | None = None) -> dict[str, A
             )
             stages.append("isolation_prepared")
 
-            repair = apply_repair(worktree.path)
+            repair = apply_repair(worktree.path, entry_id)
             stages.append("repair_applied")
-            probe = probe_repair(worktree.path)
+            probe = PROBES[entry_id](worktree.path)
             stages.append("repair_probed")
 
-            diff_hash, changed = await worktree.capture(allowed_paths=(REPAIR_FILE,))
+            allowed_path = REPAIR_SPECS[entry_id]["file"]
+            diff_hash, changed = await worktree.capture(allowed_paths=(allowed_path,))
             stages.append("candidate_captured_from_the_worktree")
 
             gate_ids = matrix_gate_ids(approved)
-            gates = [run_gate(gate_id, worktree.path) for gate_id in DRY_RUN_GATES]
+            gates_to_run = gate_ids if full_matrix else DRY_RUN_GATES
+            gates = [run_gate(gate_id, worktree.path) for gate_id in gates_to_run]
             stages.append("evaluation_run")
+
+            rolled_back = None
+            if rollback:
+                rolled_back = rollback_repair(worktree.path, entry_id, repair)
+                back_hash, back_changed = await worktree.capture(allowed_paths=())
+                rolled_back["capture_diff_is_empty"] = back_hash == _sha256(b"")
+                rolled_back["capture_changed_files"] = list(back_changed)
+                stages.append("rollback_executed_in_isolation")
     finally:
         await engine.dispose()
 
@@ -637,10 +811,11 @@ async def run_dry_run(entry_id: str, *, label: str | None = None) -> dict[str, A
         "worktree_capture": {
             "changed_files": list(changed),
             "diff_hash": diff_hash,
-            "only_the_allowed_path_changed": set(changed) <= {REPAIR_FILE},
+            "only_the_allowed_path_changed": set(changed) <= {allowed_path},
         },
         "gates": gates,
-        "gates_not_run_here": [item for item in gate_ids if item not in DRY_RUN_GATES],
+        "gates_not_run_here": [item for item in gate_ids if item not in gates_to_run],
+        "rollback": rolled_back,
         "zero_active_state_mutation": compare(before, after),
         "surface_before": before["values"],
         "surface_after": after["values"],
@@ -733,7 +908,9 @@ def check_record(record: dict[str, Any]) -> dict[str, Any]:
     if _sha256(canonical(body)) != record.get("integrity_content_hash"):
         mismatches.append("integrity_content_hash")
 
-    if [item["gate_id"] for item in record["gates"]] != list(DRY_RUN_GATES):
+    recorded_gate_ids = [item["gate_id"] for item in record["gates"]]
+    reduced_run = bool(record.get("gates_not_run_here"))
+    if reduced_run and recorded_gate_ids != list(DRY_RUN_GATES):
         mismatches.append("gates (order or membership differs from DRY_RUN_GATES)")
 
     matrix_recomputed = False
@@ -748,27 +925,28 @@ def check_record(record: dict[str, Any]) -> dict[str, Any]:
         _, proposal = asyncio.run(fixture_approved_proposal())
         gate_ids = matrix_gate_ids(proposal)
         assert_the_map_covers_the_matrix(gate_ids)
-        if sorted((*DRY_RUN_GATES, *record["gates_not_run_here"])) != sorted(gate_ids):
+        if sorted((*recorded_gate_ids, *record["gates_not_run_here"])) != sorted(gate_ids):
             mismatches.append("gates_not_run_here (union does not cover the released matrix)")
         matrix_recomputed = True
     except ModuleNotFoundError as error:
         matrix_absent_reason = f"{type(error).__name__}: {error}"
 
+    entry_id = record.get("entry_id", "L1")
+    spec = REPAIR_SPECS[entry_id]
     repair = record["repair"]
-    if repair["file"] != REPAIR_FILE:
+    if repair["file"] != spec["file"]:
         mismatches.append("repair.file")
     replace_recomputed = False
     replace_absent_reason = ""
-    active = REPO / REPAIR_FILE
+    active = REPO / spec["file"]
     if active.exists() and _sha256(active.read_bytes()) == repair["before_hash"]:
         from cognitive_os.changes.service import deterministic_replace
 
-        repaired = deterministic_replace(
-            active.read_bytes(),
-            REPAIR_BEFORE.encode(),
-            REPAIR_AFTER.encode(),
-            repair["before_hash"],
-        )
+        repaired = active.read_bytes()
+        for before, after in spec["steps"]:
+            repaired = deterministic_replace(
+                repaired, before.encode(), after.encode(), _sha256(repaired)
+            )
         if _sha256(repaired) != repair["after_hash"]:
             mismatches.append("repair.after_hash")
         replace_recomputed = True
@@ -779,23 +957,38 @@ def check_record(record: dict[str, Any]) -> dict[str, Any]:
         replace_absent_reason = "the active tree has moved past the recorded baseline"
 
     probe = record["repair_probe"]
-    accepted = probe["accepted"]
-    derived = {
-        "written_notation_now_accepted": all(accepted[unit] for unit in ("Ω", "kg·m/s", "m/s²")),
-        "ascii_notation_still_accepted": all(
-            accepted[unit] for unit in ("ohm", "kg*m/s", "m/s**2")
-        ),
-        "injection_still_refused": accepted["; rm -rf /"] is False,
-    }
-    for field, value in derived.items():
-        if probe[field] != value:
-            mismatches.append(f"repair_probe.{field}")
+    if entry_id == "L1":
+        accepted = probe["accepted"]
+        derived = {
+            "written_notation_now_accepted": all(
+                accepted[unit] for unit in ("Ω", "kg·m/s", "m/s²")
+            ),
+            "ascii_notation_still_accepted": all(
+                accepted[unit] for unit in ("ohm", "kg*m/s", "m/s**2")
+            ),
+            "injection_still_refused": accepted["; rm -rf /"] is False,
+        }
+        for field, value in derived.items():
+            if probe[field] != value:
+                mismatches.append(f"repair_probe.{field}")
+    elif probe.get("every_probe_holds") != all(
+        value for key, value in probe.items() if key != "every_probe_holds"
+    ):
+        mismatches.append("repair_probe.every_probe_holds")
 
     capture_block = record["worktree_capture"]
     if capture_block["only_the_allowed_path_changed"] != (
-        set(capture_block["changed_files"]) <= {REPAIR_FILE}
+        set(capture_block["changed_files"]) <= {spec["file"]}
     ):
         mismatches.append("worktree_capture.only_the_allowed_path_changed")
+    rolled = record.get("rollback")
+    if rolled is not None:
+        if rolled["restored_hash_is_the_baseline"] != (
+            rolled["restored_hash"] == repair["before_hash"]
+        ):
+            mismatches.append("rollback.restored_hash_is_the_baseline")
+        if rolled["capture_diff_is_empty"] != (not rolled["capture_changed_files"]):
+            mismatches.append("rollback.capture_diff_is_empty")
 
     stored = record["zero_active_state_mutation"]
     rebuilt = compare(
@@ -860,6 +1053,8 @@ def main() -> int:
         "--label", default=None, help="worktree label; a continuation must not reuse W1's"
     )
     parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--full-matrix", action="store_true")
+    parser.add_argument("--rollback", action="store_true")
     arguments = parser.parse_args()
 
     if arguments.check:
@@ -868,7 +1063,14 @@ def main() -> int:
         print(json.dumps(verdict, indent=1, sort_keys=True))
         return 0 if verdict["reproduced"] else 1
 
-    record = asyncio.run(run_dry_run(arguments.entry, label=arguments.label))
+    record = asyncio.run(
+        run_dry_run(
+            arguments.entry,
+            label=arguments.label,
+            full_matrix=arguments.full_matrix,
+            rollback=arguments.rollback,
+        )
+    )
     record["integrity_content_hash"] = _sha256(
         canonical({key: value for key, value in record.items() if key != "integrity_content_hash"})
     )
@@ -890,12 +1092,7 @@ def main() -> int:
                 ],
                 "provider": (record["provider"] or {}).get("provider_id"),
                 "repair_probe": {
-                    key: record["repair_probe"][key]
-                    for key in (
-                        "written_notation_now_accepted",
-                        "ascii_notation_still_accepted",
-                        "injection_still_refused",
-                    )
+                    key: value for key, value in record["repair_probe"].items() if key != "accepted"
                 },
                 "changed_files": record["worktree_capture"]["changed_files"],
                 "gates": [

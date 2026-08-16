@@ -288,3 +288,68 @@ def test_the_experience_check_reproduces_and_refuses_a_tampered_rank() -> None:
     tampered = _load_experience()
     tampered["retrieval"]["entries"][0]["rank"] = 5
     assert check_experience(tampered)["reproduced"] is False
+
+
+# ---------------------------------------------------------------------------
+# Dry runs 2 and 3 — distinct weakness classes, a rollback, and a second pin
+# ---------------------------------------------------------------------------
+
+DRYRUN2 = EVIDENCE / "sprint-22e-w2-dryrun2.json"
+DRYRUN3 = EVIDENCE / "sprint-22e-w2-dryrun3.json"
+
+
+def _load_record(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+@pytest.mark.parametrize("path", [DRYRUN2, DRYRUN3])
+def test_dry_runs_2_and_3_exist_and_their_seals_recompute(path: Path) -> None:
+    stored = _load_record(path)
+    body = {key: value for key, value in stored.items() if key != "integrity_content_hash"}
+    assert hashlib.sha256(_canonical(body)).hexdigest() == stored["integrity_content_hash"]
+
+
+def test_the_three_dry_runs_cover_three_distinct_weakness_classes() -> None:
+    """§2.2(c): L1 verifier_instrument, L2 policy_decision_function, L6 provider_boundary."""
+    assert _load_record(CONTINUATION)["entry_id"] == "L1"
+    assert _load_record(DRYRUN2)["entry_id"] == "L2"
+    assert _load_record(DRYRUN3)["entry_id"] == "L6"
+
+
+def test_dry_run_2_passes_the_full_matrix_and_executes_the_rollback() -> None:
+    """The success-shaped stop, and §2.2's rollback executed rather than attached as prose."""
+    stored = _load_record(DRYRUN2)
+    ran = [item for item in stored["gates"] if item.get("ran")]
+    assert ran and all(item["passed"] for item in ran)
+    assert any(item["gate_id"] == "historical_regression" for item in ran)
+    assert stored["gates_not_run_here"] == []
+    assert stored["repair_probe"]["every_probe_holds"] is True
+    rollback = stored["rollback"]
+    assert rollback["restored_hash_is_the_baseline"] is True
+    assert rollback["capture_diff_is_empty"] is True
+    assert stored["stages"][-1] == "rollback_executed_in_isolation"
+
+
+def test_dry_run_3_is_honestly_refused_by_the_released_pin_it_repairs() -> None:
+    """The L6 candidate regresses exactly one released test — the one that pins the
+    cancellation conversion. The same class as W2-F2: landing L6 requires the pin to move
+    in the same candidate."""
+    stored = _load_record(DRYRUN3)
+    gates = {item["gate_id"]: item for item in stored["gates"] if item.get("ran")}
+    failed = [item for item in gates.values() if item["passed"] is False]
+    assert [item["gate_id"] for item in failed] == ["historical_regression"]
+    assert (
+        "test_cancellation_becomes_a_typed_failure" in gates["historical_regression"]["stdout_tail"]
+    )
+    assert stored["repair_probe"]["every_probe_holds"] is True
+    assert stored["worktree_capture"]["changed_files"] == [
+        "src/cognitive_os/providers/cli_process.py"
+    ]
+
+
+@pytest.mark.parametrize("path", [DRYRUN2, DRYRUN3])
+def test_the_dryrun_check_reproduces_over_both_new_records(path: Path) -> None:
+    from dryrun_22e import check_record as check_dryrun
+
+    verdict = check_dryrun(_load_record(path))
+    assert verdict["reproduced"] is True, verdict["mismatches"]

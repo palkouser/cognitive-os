@@ -85,6 +85,17 @@ LEDGER_MAPPING: dict[str, dict[str, Any]] = {
         "problem_class": "closed_form_computation",
         "output_type": "mathematical_expression",
     },
+    "L6": {
+        "weakness_type": WeaknessType.PROVIDER_AVAILABILITY_FAILURE,
+        "component_type": WeaknessComponentType.PROVIDER,
+        "failure_code": "expired_call_reported_as_cancellation",
+        "severity": WeaknessSeverity.MEDIUM,
+        "confidence": WeaknessConfidenceLevel.VERIFIED,
+        "causal": CausalRelationshipType.OBSERVED_FAILURE,
+        "problem_domain": "provider_boundary",
+        "problem_class": "governed_call_timeout",
+        "output_type": "typed_provider_error",
+    },
 }
 
 
@@ -106,7 +117,18 @@ def load_entry(entry_id: str) -> dict[str, Any]:
     body = {key: value for key, value in stored.items() if key != "integrity_content_hash"}
     if _sha256(canonical(body)) != stored["integrity_content_hash"]:
         raise ValueError("the weakness ledger does not recompute its own seal")
-    entry = next(item for item in stored["entries"] if item["entry_id"] == entry_id)
+    entry = next((item for item in stored["entries"] if item["entry_id"] == entry_id), None)
+    if entry is None:
+        # W2's ledger revision adds entries under its own seal (superseded, never edited);
+        # an entry mined from it is checked against that seal the same way.
+        revision_path = LEDGER.with_name("sprint-22e-weakness-ledger-2.json")
+        revision = json.loads(revision_path.read_text(encoding="utf-8"))
+        revision_body = {
+            key: value for key, value in revision.items() if key != "integrity_content_hash"
+        }
+        if _sha256(canonical(revision_body)) != revision["integrity_content_hash"]:
+            raise ValueError("the ledger revision does not recompute its own seal")
+        entry = next(item for item in revision["added_entries"] if item["entry_id"] == entry_id)
     if not entry["eligible"]:
         raise ValueError(f"{entry_id} is not eligible under the W0 gate-owner decision")
     return entry
@@ -203,6 +225,14 @@ def _observations(entry_id: str, entry: dict[str, Any]) -> list[tuple[str, Any]]
             (arm, {"arm": arm, **detail})
             for arm, detail in sorted(reproduction["arms"].items())
             if detail["escalated_without_being_a_factual_output"] > 0
+        ]
+    if entry_id == "L6":
+        # The revision ledger's reproduction is a flat introspection block: each leg of the
+        # misreport chain is one reproduced observation, and the keys are the block's own.
+        return [
+            (key, {key: value})
+            for key, value in sorted(reproduction.items())
+            if isinstance(value, (bool, int, float))
         ]
     raise KeyError(f"no observation reader for {entry_id}")
 

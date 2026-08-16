@@ -1,6 +1,6 @@
 # Sprint 22E Execution Log
 
-## W2 (in progress) — the ledger revision landed; the experience leg and dry runs 2–3 open
+## W2 — the loop run three ways, the rollback executed, and the decisions sealed
 
 W2 opened by paying W1's two named debts in order: the check asymmetry (recorded as
 [W1-F9](#w1-f9--two-drivers-whose-records-only-one-command-line-could-check) and closed with
@@ -128,11 +128,41 @@ the driver. `--check` recomputes the entire record in a verify mode that writes 
 tests hold the leg, gated on the artifact root exactly as the sqlalchemy-needing tests
 already are.
 
-**Still owed by W2:** dry runs 2 and 3 on distinct weakness classes (the honest-failure
-requirement is met by the continuation; these owe distinct classes and the success-shaped
-stop at approval-eligible), and one rollback executed in isolation. W3 remains unblocked: it
-mines L7 under decision one's ruling, and the experience leg built here is what its
-successful kind will feed.
+### Dry runs 2 and 3 — three classes covered, the rollback executed, and a second pin
+
+The driver became entry-generic — a repair spec per ledger entry, applied as a hash-chained
+sequence of released `deterministic_replace` steps, a probe per entry, `--full-matrix`, and
+mining extended to the revision ledger's added entries under their own seal. All four sealed
+dry-run records reproduce under the spec-aware `--check`.
+
+**Dry run 2 — L2, `policy_decision_function`** (`sprint-22e-w2-dryrun2.json`): the 22D
+escalation predicate gains an output-kind gate with a defaulted parameter, so the frozen
+pre-registration display's call site keeps its exact behaviour. All four probe verdicts
+hold (closed-form no longer escalates; factual still does; abstention still does; the
+defaulted call is unchanged), and **every gate of the full fifteen-gate matrix passes**,
+including `historical_regression` at 259.8 s — the success-shaped stop at
+approval-eligible. Then **the rollback W2 owed was executed in isolation**: the steps
+reversed through the same released mechanism, every intermediate hash-checked, the restored
+bytes hash-identical to the recorded baseline, and the released capture reporting an empty
+diff. An eleventh stage, `rollback_executed_in_isolation`, closes the record.
+
+**Dry run 3 — L6, `provider_boundary`** (`sprint-22e-w2-dryrun3.json`): the candidate
+cleans up and re-raises the cancellation instead of converting it, so an expired caller
+deadline surfaces as `TimeoutError` at the layer that owns the deadline. The probes hold
+(the conversion is gone, the timeout path is intact, the module imports), eight gates pass
+— and `historical_regression` **honestly refuses it: exactly one released test fails out of
+4 603**, `test_cancellation_becomes_a_typed_failure_and_leaves_nothing_running`, the pin
+that asserts the very conversion the candidate removes. W2-F2's class, second instance:
+landing L6 requires that pin to move in the same candidate. The refusal is evidence about
+the candidate, and the record carries it as the dry run's outcome.
+
+**W2's owed list is now empty**: the check asymmetry closed (W1-F9), the ledger revision
+landed (L6, L7), the two W3 decisions sealed (S22E-201), the experience leg built and
+queried back (S22E-202), three dry runs across three distinct weakness classes
+(`verifier_instrument`, `policy_decision_function`, `provider_boundary`) with two honest
+refusals and one full-matrix pass, and one rollback executed in isolation. **W3 is next**:
+mine L7 under decision one's ruling, carry the repair through the full chain, and stop at
+the named-user approval — the human step the loop exists to respect.
 
 ---
 
