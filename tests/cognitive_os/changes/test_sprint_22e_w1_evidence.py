@@ -33,6 +33,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+from importlib.util import find_spec
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +44,18 @@ EVIDENCE = REPOSITORY / "docs/sprints/sprint-22/evidence"
 sys.path.insert(0, str(REPOSITORY / "scripts"))
 
 from surface_22e import active_surface_members, audit_trail_tables  # noqa: E402
+
+#: **The same portability rule, a third time in this sprint, and this time in its own tests.**
+#: `audit_trail_tables()` reads the released SQLAlchemy table definitions, and the
+#: `controlled-changes-core` lane syncs with `--all-groups` and *no extras at all* — so
+#: SQLAlchemy is absent there and these two assertions cannot run. 22D W4-F1 is a standing rule
+#: (§0) precisely because this keeps happening: W0 hit it twice, W1's gate runner once, and this
+#: file once more. Gated rather than dropped: where the dependency is present the invariant is
+#: still checked, and where it is absent the test says so instead of failing for a reason that
+#: is not about the claim.
+_NEEDS_SQLALCHEMY = pytest.mark.skipif(
+    find_spec("sqlalchemy") is None, reason="the postgres extra is absent from this lane"
+)
 
 RECORDS = {
     "substrate": EVIDENCE / "sprint-22e-w1-substrate.json",
@@ -71,6 +84,7 @@ def test_every_w1_record_exists_and_its_seal_recomputes(name: str) -> None:
 # ---------------------------------------------------------------------------
 
 
+@_NEEDS_SQLALCHEMY
 def test_the_audit_trail_set_is_exactly_the_released_ledger_tables() -> None:
     """Derived from the released tables module, so a new ledger table joins it automatically."""
     from sqlalchemy import Table
@@ -84,6 +98,7 @@ def test_the_audit_trail_set_is_exactly_the_released_ledger_tables() -> None:
     assert "change_experiments" in audit_trail_tables()
 
 
+@_NEEDS_SQLALCHEMY
 def test_the_split_excludes_the_ledger_and_nothing_else() -> None:
     """Asserted against the released modules rather than against a record.
 
