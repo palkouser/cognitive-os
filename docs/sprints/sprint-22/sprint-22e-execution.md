@@ -1,5 +1,121 @@
 # Sprint 22E Execution Log
 
+## W3 — the one approved change, and the two seams the first real landing opened
+
+W3 spent the sprint's single approved change on **L7**, the entry the gate owner selected in
+S22E-201: 22E's own W1-F7, repaired through the loop that found it. The driver reads that sealed
+decision and refuses to run against any other entry, because a driver that hard-codes the
+selection is a driver that makes it.
+
+**The chain, and what each leg measured.** The weakness was mined from the sealed ledger
+revision, a live claude-code draft was admitted by `merge_provider_draft`'s own host
+verification, and the repair was applied by `deterministic_replace` in a real worktree, one
+hash-chained step per file. Then the full released matrix: **nine gates ran and nine passed** in
+286.5 s, including `historical_regression` over the whole suite and `compatibility` over 638
+files; six gates are driver-decided and named as such. **Zero active-state mutation**, every
+surface member recomputed and reported individually, with `audit_trail_moved: true` beside it —
+a governed traversal that wrote no audit record would be a loop nobody can audit. Sealed in
+`sprint-22e-w3-approved-change.json` (`831d3a2df724bd1b…`).
+
+**The repair, and the type checker that changed it.** The obvious minimal fix is
+`merged.seal_content()` — the contract's own sealer, called on the copy. It runs correctly and
+`compatibility` rejects it:
+
+    service.py:693: error: "PydanticDescriptorProxy[ModelValidatorDecoratorInfo]" not callable
+
+A `@model_validator` is a descriptor proxy at type level, not a callable. **So a caller that
+blanks a hashed contract's seal has no typed way to put it back** — the only sealing entry point
+the contract exposes is a validator, and validators are exactly what `model_copy` skips. That is
+the deeper cause of W1-F7 rather than a detail of its repair, and it is why the repair went to
+revalidation, the mechanism that does re-run them. The narrow version was tried first and the
+gate is what rejected it, which is the difference between a design decision and a preference.
+
+**The negative controls, both directions.** The probe fails on the unrepaired active checkout
+with the released refusal in its tail, and all nine of its assertions hold on the repaired tree.
+The candidate's own new test fails without the repair (`1 failed, 7 passed`) and passes with it
+(`8 passed`). A probe green on both trees would measure nothing, and the record carries both
+runs rather than the flattering one.
+
+**Why the defect survived release, stated where it can be checked.** `test_proposal_engine.py`
+had two provider tests and both assert a *failure*: the unsafe draft must be refused, the
+unavailable provider must fall back. Nothing exercised an **admitted** draft, so every assertion
+about the provider-assisted path was an assertion about how it fails. The candidate carries the
+missing test with the repair, because a repair without the test that would have caught it leaves
+the next instance to the next sprint.
+
+### W3-F1 — a live reproduction cannot survive its own repair
+
+Found by the first run, inside the candidate's own evaluation matrix. W2 chose to **re-execute**
+both new ledger reproductions on every `--check` rather than quote them, on W0-F1's lesson that
+a quoted finding's price expires silently when a successor ships half of it. The opposite
+failure mode is now measured: with the repair present in the worktree, `merged_seal_is_blank`
+came back `False`, the sealed record stopped reproducing, and `focused_target_tests` and
+`historical_regression` both failed on it. **A governed self-improvement loop whose evidence
+re-executes breaks its own evidence on its first success.**
+
+The resolution is neither to stop re-executing nor to weaken the comparison. The checker now
+answers a two-outcome question — *does the defect still reproduce, or does the repaired
+behaviour hold field by field?* — and reads **both** sides: the stored reproduction must still
+be the sealed defect before its disappearance can be explained by a repair, so a tampered stored
+record is still a mismatch in a repaired tree, and the merged seal must be a real 64-hex hash
+rather than merely non-blank. Drift satisfies neither branch. The sealed record is untouched and
+stays true of the commit it was sealed against; what changed is that the checker can now say
+which of the two worlds it is looking at instead of reporting the repair as corruption.
+
+### W3-F2 — the released promotion chain cannot name a real repository file
+
+`capture_candidate` was called with the real changed paths and refused: **`candidate changed a
+forbidden path`**. The manifest's whole allowed scope is `proposal-scope/source_code_change.py`,
+because `build_change_specification` synthesises `proposal-scope/<type>.py` for every
+`repository_file` proposal, `prepare_isolation` copies it into the manifest, and
+`capture_candidate` compares against it. `changes/demo.py` — the only prior exercise of this
+chain — passes `isolation.allowed_repository_paths` straight back in, so both sides agreed and
+the seam never opened. This is W1's finding family for the third time: released code that had
+never been run with a real subject.
+
+**Consequence, and what was not done about it.** No `ChangeCandidate` exists for this change, so
+`PromotionAssessment`, `PromotionReview` and `PromotionBundle` are all unbuildable and
+`approve_promotion` cannot be called. The placeholder was **not** substituted and an empty file
+list was **not** passed; either would have been the driver certifying its own scope. The refusal
+is recorded as a stage the run entered, with the real paths and the manifest's beside it, and a
+test re-derives the synthetic path from the released builder rather than quoting it.
+
+The gate owner ruled that L7 stays the sprint's one approved change and W3-F2 goes to the
+successor's ledger. The selection is sealed and the repair is proven; §2.3 forbids a second
+repair, and spending the change on the seam discovered while walking to it is exactly how one
+approved change becomes two.
+
+### The named human, and where the approval had to go
+
+§2.2(b) puts "approval by the named user" between the matrix and the PR, and W3-F2 makes the
+released home for it unreachable. So the approval is sealed as its own act in
+`sprint-22e-w3-approval.json` (`04d0dea836663876…`): the approver, what they approved bound by
+the change record's hash and the candidate's exact diff hash, the gate evidence it was granted
+against, and — explicitly — what it does **not** permit. A human act nobody can re-check is not
+evidence that a human acted.
+
+**PR [#237](https://github.com/palkouser/cognitive-os/pull/237)** carries exactly the two
+approved files, byte-identical to what the matrix evaluated (verified by hash against the sealed
+record before the commit was made). The merge is the gate owner's separate act and this wave
+does not perform it; the post-merge exact-head CI reading belongs to whichever wave observes it.
+
+### The re-measurement, resolved rather than skipped
+
+§3 makes the re-measurement conditional on the landed repair touching a Gate M condition. The
+ledger records L7 as touching **none**, and the gate owner's own arithmetic premise names L1 for
+condition 6 and L2 for condition 7 — disjoint sets, neither of which is what landed. So **no
+re-measurement is licensed**, the frozen instrument was not re-run, and conditions 6 and 7 keep
+reading 22D's sealed negatives. Sealed in `sprint-22e-w3-remeasurement.json`
+(`50d21098a5ff8d99…`) rather than left as an absence, because a measurement skipped in silence
+is indistinguishable later from one that was never owed.
+
+This was predicted before any candidate existed: the decision record states it as the arithmetic
+premise of the selection, and §4 states it as a risk the evidence cannot retire. **Gate M cannot
+fully close in 22E under any selection**, and the sprint chose which certain negative was worth
+the most rather than discovering the arithmetic in W4.
+
+---
+
 ## W2 — the loop run three ways, the rollback executed, and the decisions sealed
 
 W2 opened by paying W1's two named debts in order: the check asymmetry (recorded as

@@ -1,0 +1,389 @@
+{
+ "assessment": {
+  "built": false
+ },
+ "baseline_negative_control": {
+  "probe_holds_without_the_repair": false,
+  "ran_against": "the unrepaired active checkout",
+  "refusal_tail": [
+   "    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)",
+   "                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+   "pydantic_core._pydantic_core.ValidationError: 1 validation error for ProposalCreated",
+   "proposal_content_hash",
+   "  String should match pattern '^[0-9a-f]{64}$' [type=string_pattern_mismatch, input_value='', input_type=str]",
+   "    For further information visit https://errors.pydantic.dev/2.13/v/string_pattern_mismatch"
+  ],
+  "why": "a repair probe that passes on the unrepaired tree is not measuring the repair"
+ },
+ "candidate_test": {
+  "command": "pytest tests/cognitive_os/proposals/test_proposal_engine.py",
+  "exit_code": 0,
+  "passed": true,
+  "tail": [
+   "8 passed in 1.45s"
+  ]
+ },
+ "draft": {
+  "advisory_fields": [
+   "findings",
+   "recommendations",
+   "risks",
+   "summary",
+   "verification_steps"
+  ],
+  "generation_mode_after_host_verification": "provider_assisted",
+  "generation_mode_on_the_approved_revision": "deterministic",
+  "prompt_bytes": 2041,
+  "summary": "The repair changes how `merge_provider_draft` produces the revision it returns: instead of deriving it by a copy-with-update that skips the model's validators, the merged revision is constructed through the revision contract's validating path, so the content hash is recomputed over the merged content and the seal is populated and checked before the value leaves the function. Everything else about the function — the host verification that admits the draft, the merge semantics, the `provider_assisted` mark, the signature and return type — is unchanged."
+ },
+ "entry_id": "L7",
+ "evaluation": {
+  "driver_decided": [
+   "target_benchmark",
+   "candidate_integrity",
+   "migration",
+   "backup_restore_rollback",
+   "performance_resources",
+   "resource_budget"
+  ],
+  "gates": 15,
+  "gates_failed": [],
+  "gates_passed": 9,
+  "gates_ran": 9,
+  "wall_clock_seconds": 286.541
+ },
+ "gates": [
+  {
+   "decided_by": "driver",
+   "gate_id": "target_benchmark",
+   "ran": false
+  },
+  {
+   "decided_by": "driver",
+   "gate_id": "candidate_integrity",
+   "ran": false
+  },
+  {
+   "command": [
+    "uv",
+    "lock",
+    "--check"
+   ],
+   "decided_by": "command",
+   "gate_id": "reproducible_build",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 0.027,
+   "stderr_tail": "Resolved 174 packages in 0.97ms",
+   "stdout_tail": ""
+  },
+  {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "--extra",
+    "postgres",
+    "pytest",
+    "tests/cognitive_os/changes",
+    "-q"
+   ],
+   "decided_by": "command",
+   "gate_id": "focused_target_tests",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 3.715,
+   "stderr_tail": "Installed 5 packages in 6ms",
+   "stdout_tail": "................................................................s....... [ 70%]\n.....................ss.......                                           [100%]\n99 passed, 3 skipped in 3.09s"
+  },
+  {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "--extra",
+    "mcp",
+    "--extra",
+    "memory-postgres",
+    "pytest",
+    "tests/cognitive_os",
+    "-q"
+   ],
+   "decided_by": "command",
+   "gate_id": "historical_regression",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 256.786,
+   "stderr_tail": "Installed 14 packages in 16ms",
+   "stdout_tail": "....... [ 95%]\n........................................................................ [ 97%]\n.....................................................s.................. [ 98%]\n...........................................ssss..................        [100%]\n4612 passed, 134 skipped in 255.35s (0:04:15)"
+  },
+  {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "--extra",
+    "mcp",
+    "pytest",
+    "tests/contract",
+    "-q"
+   ],
+   "decided_by": "command",
+   "gate_id": "unrelated_domain_regression",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 3.832,
+   "stderr_tail": "",
+   "stdout_tail": ".................................................................        [100%]\n65 passed in 3.27s"
+  },
+  {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "bandit",
+    "-q",
+    "-r",
+    "src/cognitive_os"
+   ],
+   "decided_by": "command",
+   "gate_id": "security",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 5.121,
+   "stderr_tail": "failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:53\n[tester]\tWARNING\tnosec encountered (B108), but no failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:56\n[tester]\tWARNING\tnosec encountered (B108), but no failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:57",
+   "stdout_tail": ""
+  },
+  {
+   "command": [
+    "bash",
+    "scripts/check_repository_language.sh"
+   ],
+   "decided_by": "command",
+   "gate_id": "policy",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 0.017,
+   "stderr_tail": "",
+   "stdout_tail": "Repository language check passed."
+  },
+  {
+   "decided_by": "driver",
+   "gate_id": "migration",
+   "ran": false
+  },
+  {
+   "command": [
+    "bash",
+    "scripts/export_contract_schemas.sh",
+    "--check"
+   ],
+   "decided_by": "command",
+   "gate_id": "schema",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 1.771,
+   "stderr_tail": "",
+   "stdout_tail": "Contract schema check passed."
+  },
+  {
+   "decided_by": "driver",
+   "gate_id": "backup_restore_rollback",
+   "ran": false
+  },
+  {
+   "decided_by": "driver",
+   "gate_id": "performance_resources",
+   "ran": false
+  },
+  {
+   "decided_by": "driver",
+   "gate_id": "resource_budget",
+   "ran": false
+  },
+  {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "--extra",
+    "memory-postgres",
+    "mypy",
+    "src/cognitive_os"
+   ],
+   "decided_by": "command",
+   "gate_id": "compatibility",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 13.114,
+   "stderr_tail": "",
+   "stdout_tail": "mypy.ini: note: unused section(s): [mypy-LightAgent.*], [mypy-alembic.*]\nSuccess: no issues found in 638 source files"
+  },
+  {
+   "command": [
+    "uv",
+    "build",
+    "--out-dir",
+    "/tmp/cogos-s22e-build"
+   ],
+   "decided_by": "command",
+   "gate_id": "dependency_packaging",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 2.158,
+   "stderr_tail": "adding 'cognitive_os-0.1.0.dev1.dist-info/top_level.txt'\nadding 'cognitive_os-0.1.0.dev1.dist-info/RECORD'\nremoving build/bdist.linux-x86_64/wheel\nSuccessfully built /tmp/cogos-s22e-build/cognitive_os-0.1.0.dev1.tar.gz\nSuccessfully built /tmp/cogos-s22e-build/cognitive_os-0.1.0.dev1-py3-none-any.whl",
+   "stdout_tail": ""
+  }
+ ],
+ "installing_traversal_exception": {
+  "caller_resealed_through_the_contract": true,
+  "merged_revision_seal_was_blank": true,
+  "ruling": "the chain is walked by repairing it: the one approved change is the L7 repair, and the installing traversal documents its own exception — the repaired behaviour cannot be required of the traversal that installs the repair",
+  "why": "this traversal runs against the unrepaired checkout, where the defect it installs the repair for is still present; the repaired behaviour cannot be required of the traversal that installs the repair"
+ },
+ "integrity_content_hash": "831d3a2df724bd1b8c08f7ddbc8e050905844c13e8761ce814cc01d2101119c3",
+ "promotion": {
+  "attempted": false
+ },
+ "promotion_bundle": null,
+ "provider": {
+  "adapter": "claude_code",
+  "normalized_response_hash": "725b1745c9e486673822cb4bd9e5cca0ca10099d1cca8cebf8bf49255d5d5b03",
+  "provider_id": "claude-code",
+  "request_hash": "b07878c9e85d09b792956d0dc723d121732d10d2a72410757e8df57fb5255b3e",
+  "resolved_model": "claude-code",
+  "retention_mode": "none"
+ },
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "released_scope_check": {
+  "accepted": false,
+  "attempted_with_the_real_paths": true,
+  "candidate_changed_files": [
+   "src/cognitive_os/proposals/service.py",
+   "tests/cognitive_os/proposals/test_proposal_engine.py"
+  ],
+  "manifest_allowed_repository_paths": [
+   "proposal-scope/source_code_change.py"
+  ],
+  "refusal": "candidate changed a forbidden path"
+ },
+ "repair": {
+  "applied_by": "cognitive_os.changes.service.deterministic_replace",
+  "changed_files": [
+   "src/cognitive_os/proposals/service.py",
+   "tests/cognitive_os/proposals/test_proposal_engine.py"
+  ],
+  "files": [
+   {
+    "after_hash": "2839d5b164a3946afa8ffc948b2e3f0dd39a3009c3f55922fa1bb4432db8f40d",
+    "before_hash": "90f364a9f4c30b105de3ca20f216d0cbb2d3901e89e691465dab4890425742af",
+    "bytes_changed": 732,
+    "file": "src/cognitive_os/proposals/service.py",
+    "steps": 1
+   },
+   {
+    "after_hash": "16dfbd0cd117c6614c9df96998e1c428ad156e0d5f93f2e9095939f1f6939450",
+    "before_hash": "dd58115e1f85a8874c9fccdca6002f330240abcf7e53d46a6935cf6f175cdebf",
+    "bytes_changed": 2168,
+    "file": "tests/cognitive_os/proposals/test_proposal_engine.py",
+    "steps": 2
+   }
+  ],
+  "the_change_carries_its_own_test": true,
+  "the_provider_did_not_write_this": "no released provider configuration in this repository can write a file, and merge_provider_draft refuses a draft carrying a patch; the host applied the change and the provider advised on the proposal"
+ },
+ "repair_probe": {
+  "every_probe_holds": true,
+  "mark_survives_to_the_returned_revision": true,
+  "merged_seal_differs_from_the_unmerged_one": true,
+  "merged_seal_is_64_hex": true,
+  "merged_seal_is_the_canonical_hash": true,
+  "merged_type_is_unchanged": true,
+  "released_path_completes": true,
+  "returned_revision_seal_is_64_hex": true,
+  "unavailable_provider_still_falls_back": true,
+  "unsafe_draft_still_refused": true,
+  "why_the_refusal_cases_are_here": "a repair that sealed an inadmissible draft would trade a blocked path for an open one; the unsafe draft and the unavailable provider are measured beside the admitted one"
+ },
+ "selection": {
+  "decided_by": "the Sprint 22 gate owner",
+  "decision_record_hash": "72303b27815306e97dc11c4d73208e19327d34f30209c0e9c971d0595988f128",
+  "selection": "L7",
+  "selection_finding": "22E W1-F7",
+  "walkability_ruling": "the chain is walked by repairing it: the one approved change is the L7 repair, and the installing traversal documents its own exception — the repaired behaviour cannot be required of the traversal that installs the repair"
+ },
+ "stages": [
+  "weakness_mined",
+  "proposal_created",
+  "provider_draft_merged_and_resealed",
+  "proposal_approved_for_experiment",
+  "baseline_negative_control_recorded",
+  "experiment_requested",
+  "isolation_prepared",
+  "repair_applied",
+  "repair_probed",
+  "candidate_test_run",
+  "candidate_captured_from_the_worktree",
+  "candidate_scope_refused",
+  "evaluation_run"
+ ],
+ "surface_after": {
+  "active_artifact_namespace_hash": "01564524d511cf3d57b378b454804da758fcf1a76d62bbcbdf5835f7e24b9cad",
+  "active_database_fingerprint": "4478374c536cb4a9aaf441160c6b42799b4747ce1e42e7c37cbbacca7de34a77",
+  "domain_registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "repository_commit": "3e08a6740398716218a31d310ed83a7e47c5c495",
+  "repository_manifest_hash": "e7348d3f9700d30b50317977cfaf27af13d047328c0d64ad4c613278f3810f03",
+  "repository_status_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "surface_before": {
+  "active_artifact_namespace_hash": "01564524d511cf3d57b378b454804da758fcf1a76d62bbcbdf5835f7e24b9cad",
+  "active_database_fingerprint": "4478374c536cb4a9aaf441160c6b42799b4747ce1e42e7c37cbbacca7de34a77",
+  "domain_registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "repository_commit": "3e08a6740398716218a31d310ed83a7e47c5c495",
+  "repository_manifest_hash": "e7348d3f9700d30b50317977cfaf27af13d047328c0d64ad4c613278f3810f03",
+  "repository_status_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "worktree_capture": {
+  "changed_files": [
+   "src/cognitive_os/proposals/service.py",
+   "tests/cognitive_os/proposals/test_proposal_engine.py"
+  ],
+  "diff_hash": "64d3e707e8e7418098bd0547a884ae01f924d3b02c9ba36c013a5e874479b5ed",
+  "only_the_declared_paths_changed": true
+ },
+ "zero_active_state_mutation": {
+  "audit_trail_fingerprint_after": "119e007d44231e56997bd1f4d3bb043c7b14f69515034e65296c0fe99d8cd667",
+  "audit_trail_fingerprint_before": "b8f1d56637b823336a1dbb5fe4ae695446236c6c9b5651a039e51b4fd280d6e4",
+  "audit_trail_moved": true,
+  "comparison_is_recomputed": "every member's equality is computed here from the two captures; nothing in this record is an `unchanged: true` literal supplied by the thing being checked (22A W4-F2)",
+  "members_compared": [
+   "repository_commit",
+   "repository_status_hash",
+   "repository_manifest_hash",
+   "active_database_fingerprint",
+   "active_artifact_namespace_hash",
+   "domain_registry_snapshot_hash"
+  ],
+  "mutated_members": [],
+  "per_member_unchanged": {
+   "active_artifact_namespace_hash": true,
+   "active_database_fingerprint": true,
+   "domain_registry_snapshot_hash": true,
+   "repository_commit": true,
+   "repository_manifest_hash": true,
+   "repository_status_hash": true
+  },
+  "surface_hash_after": "f5f81fdaa0367526fbef876fd3605b04888618c298c42369af1d42c5e94fd94d",
+  "surface_hash_before": "f5f81fdaa0367526fbef876fd3605b04888618c298c42369af1d42c5e94fd94d",
+  "zero_active_state_mutation": true
+ }
+}
